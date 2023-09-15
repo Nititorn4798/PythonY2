@@ -104,6 +104,7 @@ def FitterInput(msg,mode):
     
 def memberRegister(regMode = ""):
     global line
+    global oldUser
     tempList = []
     print(f'\n{"*"*50}')
     print('\nระบบสมัครสมาชิก')
@@ -172,7 +173,7 @@ while not isError:
         memberRegister()
         mode = "oldDB"
     if mode == "oldDB":
-        userlogin = "ADMIN" #!Bypass Login
+        # userlogin = "ADMIN" #!Bypass Login
         login()
 
         while True:
@@ -278,21 +279,22 @@ while not isError:
         saveFile = True
         if saveFile == True:
             
-            if oldUser == True: #! Update Data in file
+            if oldUser is True: #! Update Data in file
                 currowLine = ldsDataDict[userlogin]["rowline"] - 1
                 laundryshopData = open(f'{MYPATH}/{MYFILE}', 'r+', encoding="utf-8")
                 tempList = laundryshopData.readlines()
                 print(tempList)
                 print(tempList[currowLine])
-                tempList[currowLine] = ldsDataDict[userlogin]["user"] + " " + ldsDataDict[userlogin]["password"] + " " + str(ldsDataDict[userlogin]["coin"]) + " " + str(ldsDataDict[userlogin]["point"])
+                tempList[currowLine] = ldsDataDict[userlogin]["user"] + " " + ldsDataDict[userlogin]["password"] + " " + str(curCoin) + " " + str(curPoint)
                 print(tempList)
                 laundryshopData = open(f'{MYPATH}/{MYFILE}', 'w', encoding="utf-8")
                 laundryshopData.writelines(tempList)
                 laundryshopData.close()
             else:
-                temp = ldsDataDict[userlogin]["user"] + " " + ldsDataDict[userlogin]["password"] + " " + str(ldsDataDict[userlogin]["coin"]) + " " + str(ldsDataDict[userlogin]["point"])
+                temp = ldsDataDict[userlogin]["user"] + " " + ldsDataDict[userlogin]["password"] + " " + str(curCoin) + " " + str(curPoint)
                 print(temp)
                 laundryshopData = open(f'{MYPATH}/{MYFILE}', 'a', encoding="utf-8")
+                laundryshopData.write("\n")
                 laundryshopData.write(temp)
                 laundryshopData.close()
             # print(ldsDataDict[userlogin]["user"] , ldsDataDict[userlogin]["password"] , ldsDataDict[userlogin]["coin"] , ldsDataDict[userlogin]["point"])
