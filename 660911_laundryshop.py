@@ -38,44 +38,51 @@ firstLoad = True
 userlogin= ''
 saveFile = False
 oldUser = True
+notUse = False
 
-laundryshopData = open(f'{MYPATH}/{MYFILE}', 'r+', encoding="utf-8")
 
-line = 1
-print(f'\n{"*"*(24+fileNameLen)}\n**    โหลดข้อมูลจาก {MYFILE}    **\n{"*"*(24+fileNameLen)}\n')
-try:
-    for i in laundryshopData:
-        if line > 1:
-            ldsTempData = i
-            tempList = (ldsTempData.replace('\n', '').split(" ")) #!เปลี่ยน \n เป็น ว่าง แล้วจึงแยกด้วย " " ได้ Type = List
-            print(tempList) #!!!!DEBUG
-            if tempList[0].upper() not in ldsDataDict:
-                print(f'DEBUG Get Data Form File : {tempList[0]} {tempList[1]} {tempList[2]} {tempList[3]}')
-                tempDict = {
-                    tempList[0].upper() : {U:tempList[0], Pw:tempList[1], C:float(tempList[2]), P:float(tempList[3]), R:int(line)}
-                }
-                ldsDataDict.update(tempDict)
-                print(ldsDataDict)
-            else:
-                print(f'\nเกิดข้อผิดพลาดขณะโหลดไฟล์ กรุณาตรวจสอบค่า ในฐานข้อมูลที่บรรทัด {line-1}(+1) ว่ามี Username ซ้ำหรือไม่')
-                isError = True
-                break
-        line += 1
-except ValueError:
-    isError = True
-    print(f'\nเกิดข้อผิดพลาดขณะโหลดไฟล์ (ValueError) กรุณาตรวจสอบค่าของ Coin หรือ Point ในฐานข้อมูลที่บรรทัด {line-1}(+1)')
-    print('\nError Detail : \n')
-    raise
-except IndexError:
-    isError = True
-    print(f'\nเกิดข้อผิดพลาดขณะโหลดไฟล์ (IndexError) กรุณาตรวจสอบค่า ในฐานข้อมูลที่บรรทัด {line-1}(+1) ว่ามีการขาดหาย,มีบรรทัดว่าง หรือไม่')
-    print('\nError Detail : \n')
-    raise
-    
-finally:
-    if isError is False:
-        print(f'\n{"*"*(31+fileNameLen)}\n**    โหลดข้อมูลจาก {MYFILE} เสร็จสิ้น    **\n{"*"*(31+fileNameLen)}\n')
+
+def loadData():
+    laundryshopData = open(f'{MYPATH}/{MYFILE}', 'r+', encoding="utf-8")
+    global ldsDataDict
+    global isError
+    global line
+    line = 1
+    print(f'\n{"*"*(24+fileNameLen)}\n**    โหลดข้อมูลจาก {MYFILE}    **\n{"*"*(24+fileNameLen)}\n')
+    ldsDataDict.clear()
+    try:
+        for i in laundryshopData:
+            if line > 1:
+                ldsTempData = i
+                tempList = (ldsTempData.replace('\n', '').split(" ")) #!เปลี่ยน \n เป็น ว่าง แล้วจึงแยกด้วย " " ได้ Type = List
+                print(tempList) #!!!!DEBUG
+                if tempList[0].upper() not in ldsDataDict:
+                    print(f'Log : {tempList[0]} {tempList[1]} {tempList[2]} {tempList[3]}')
+                    tempDict = {
+                        tempList[0].upper() : {U:tempList[0], Pw:tempList[1], C:float(tempList[2]), P:float(tempList[3]), R:int(line)}
+                    }
+                    ldsDataDict.update(tempDict)
+                    print(ldsDataDict)
+                else:
+                    print(f'\nเกิดข้อผิดพลาดขณะโหลดไฟล์ กรุณาตรวจสอบค่า ในฐานข้อมูลที่บรรทัด {line-1}(+1) ว่ามี Username ซ้ำหรือไม่')
+                    isError = True
+                    break
+            line += 1
+    except ValueError:
+        isError = True
+        print(f'\nเกิดข้อผิดพลาดขณะโหลดไฟล์ (ValueError) กรุณาตรวจสอบค่าของ Coin หรือ Point ในฐานข้อมูลที่บรรทัด {line-1}(+1)')
+        print('\nError Detail : \n')
+        raise
+    except IndexError:
+        isError = True
+        print(f'\nเกิดข้อผิดพลาดขณะโหลดไฟล์ (IndexError) กรุณาตรวจสอบค่า ในฐานข้อมูลที่บรรทัด {line-1}(+1) ว่ามีการขาดหาย,มีบรรทัดว่าง หรือไม่')
+        print('\nError Detail : \n')
+        raise
         
+    finally:
+        if isError is False:
+            print(f'\n{"*"*(31+fileNameLen)}\n**    โหลดข้อมูลจาก {MYFILE} เสร็จสิ้น    **\n{"*"*(31+fileNameLen)}\n')
+            
 def FitterInput(msg,mode):
     match mode:
         case "user":
@@ -167,6 +174,7 @@ def topup():
 
 while not isError:
     #!Main
+    loadData()
     print('\tยินดีต้อนรับสู่ร้านซักรีดเสื้อผ้าของเรา')
     if mode == "FirstCreate":
         print('ยินดีด้วยคุณคือลูกค้าคนแรก โปรดสมัครสมาชิกก่อนใช้งาน !')
@@ -246,8 +254,10 @@ while not isError:
                 if q in ['Y','y']:
                     topup()
                 else:
+                    notUse = True
                     break
             else:
+                notUse = False
                 if totalprice - curPoint >= 0:
                     usePoint = curPoint
                     curPoint -= totalprice
@@ -269,12 +279,13 @@ while not isError:
                     curPoint += gotpoint
                     break
 
-        print(f'\nใช้เหรียญไป {useCoin:,.2f}')
-        print(f'เหรียญคงเหลือคือ {curCoin:,.2f}')
-        print(f'ใช้แต้มไป {usePoint:,.2f}')
-        print(f'ได้แต้ม {gotpoint:,.2f}')
-        print(f'แต้มคงเหลือคือ {curPoint:,.2f}')
-        print(f'\n{"*"*50}\n')
+        if notUse == False:
+            print(f'\nใช้เหรียญไป {useCoin:,.2f}')
+            print(f'เหรียญคงเหลือคือ {curCoin:,.2f}')
+            print(f'ใช้แต้มไป {usePoint:,.2f}')
+            print(f'ได้แต้ม {gotpoint:,.2f}')
+            print(f'แต้มคงเหลือคือ {curPoint:,.2f}')
+            print(f'\n{"*"*50}\n')
         
         saveFile = True
         if saveFile == True:
@@ -283,16 +294,15 @@ while not isError:
                 currowLine = ldsDataDict[userlogin]["rowline"] - 1
                 laundryshopData = open(f'{MYPATH}/{MYFILE}', 'r+', encoding="utf-8")
                 tempList = laundryshopData.readlines()
-                print(tempList)
-                print(tempList[currowLine])
+                # print(tempList)
+                # print(tempList[currowLine])
                 tempList[currowLine] = ldsDataDict[userlogin]["user"] + " " + ldsDataDict[userlogin]["password"] + " " + str(curCoin) + " " + str(curPoint)
-                print(tempList)
                 laundryshopData = open(f'{MYPATH}/{MYFILE}', 'w', encoding="utf-8")
                 laundryshopData.writelines(tempList)
                 laundryshopData.close()
             else:
                 temp = ldsDataDict[userlogin]["user"] + " " + ldsDataDict[userlogin]["password"] + " " + str(curCoin) + " " + str(curPoint)
-                print(temp)
+                # print(temp)
                 laundryshopData = open(f'{MYPATH}/{MYFILE}', 'a', encoding="utf-8")
                 laundryshopData.write("\n")
                 laundryshopData.write(temp)
@@ -310,4 +320,4 @@ while not isError:
             firstLoad = True #! ต้อง Save dict ลง text ก่อน
             print(f'\n\n{"*"*50}\n')
             
-            #TODO: ทำ การเก็บข้อมูลลง txt อีกครั้งโดยใช้ rowline
+#ToDo : แก้ bug หลัง register user ใหม่ จะเป็นการ append 
