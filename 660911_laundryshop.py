@@ -1,6 +1,6 @@
 import math
 MYPATH = "/Dev/Coding/Python/Inclass/Homework/660911"
-MYFILE = "DATA_laundryshop.txt"
+MYFILE = "DATA_laundryshopX.txt"
 fileNameLen = len(MYFILE)
 mode = "create"
 
@@ -57,7 +57,7 @@ def loadData():
                 tempList = (ldsTempData.replace('\n', '').split(" ")) #!เปลี่ยน \n เป็น ว่าง แล้วจึงแยกด้วย " " ได้ Type = List
                 print(tempList) #!!!!DEBUG
                 if tempList[0].upper() not in ldsDataDict:
-                    print(f'Log : {tempList[0]} {tempList[1]} {tempList[2]} {tempList[3]}')
+                    print(f'Load <<< {tempList[0]}, {tempList[1]}, {tempList[2]}, {tempList[3]}')
                     tempDict = {
                         tempList[0].upper() : {U:tempList[0], Pw:tempList[1], C:float(tempList[2]), P:float(tempList[3]), R:int(line)}
                     }
@@ -68,6 +68,7 @@ def loadData():
                     isError = True
                     break
             line += 1
+        print('\n\tLoad Done...')
     except ValueError:
         isError = True
         print(f'\nเกิดข้อผิดพลาดขณะโหลดไฟล์ (ValueError) กรุณาตรวจสอบค่าของ Coin หรือ Point ในฐานข้อมูลที่บรรทัด {line-1}(+1)')
@@ -289,25 +290,28 @@ while not isError:
         
         saveFile = True
         if saveFile == True:
-            
-            if oldUser is True: #! Update Data in file
-                currowLine = ldsDataDict[userlogin]["rowline"] - 1
-                laundryshopData = open(f'{MYPATH}/{MYFILE}', 'r+', encoding="utf-8")
-                tempList = laundryshopData.readlines()
-                # print(tempList)
-                # print(tempList[currowLine])
-                tempList[currowLine] = ldsDataDict[userlogin]["user"] + " " + ldsDataDict[userlogin]["password"] + " " + str(curCoin) + " " + str(curPoint)
-                laundryshopData = open(f'{MYPATH}/{MYFILE}', 'w', encoding="utf-8")
-                laundryshopData.writelines(tempList)
-                laundryshopData.close()
-            else:
-                temp = ldsDataDict[userlogin]["user"] + " " + ldsDataDict[userlogin]["password"] + " " + str(curCoin) + " " + str(curPoint)
-                # print(temp)
-                laundryshopData = open(f'{MYPATH}/{MYFILE}', 'a', encoding="utf-8")
-                laundryshopData.write("\n")
-                laundryshopData.write(temp)
-                laundryshopData.close()
-            # print(ldsDataDict[userlogin]["user"] , ldsDataDict[userlogin]["password"] , ldsDataDict[userlogin]["coin"] , ldsDataDict[userlogin]["point"])
+            try:
+                if oldUser is True: #! Update Data in file
+                    currowLine = ldsDataDict[userlogin]["rowline"] - 1
+                    laundryshopData = open(f'{MYPATH}/{MYFILE}', 'r+', encoding="utf-8")
+                    tempList = laundryshopData.readlines()
+                    # print(tempList)
+                    # print(tempList[currowLine])
+                    tempList[currowLine] = ldsDataDict[userlogin]["user"] + " " + ldsDataDict[userlogin]["password"] + " " + str(curCoin) + " " + str(curPoint) + "\n"
+                    laundryshopData = open(f'{MYPATH}/{MYFILE}', 'w', encoding="utf-8")
+                    laundryshopData.writelines(tempList)
+                    laundryshopData.close()
+                else:
+                    temp = ldsDataDict[userlogin]["user"] + " " + ldsDataDict[userlogin]["password"] + " " + str(curCoin) + " " + str(curPoint)
+                    # print(temp)
+                    laundryshopData = open(f'{MYPATH}/{MYFILE}', 'a', encoding="utf-8")
+                    laundryshopData.write("\n")
+                    laundryshopData.write(temp)
+                    oldUser = True #!Fix
+                    laundryshopData.close()
+                # print(ldsDataDict[userlogin]["user"] , ldsDataDict[userlogin]["password"] , ldsDataDict[userlogin]["coin"] , ldsDataDict[userlogin]["point"])
+            finally:
+                print('บันทึกข้อมูลสำเร็จ')
         
         print('ท่านต้องการทำงานอีกครั้งไหม [Y / N] ?')
         q = input('\t>>> ')
@@ -320,4 +324,3 @@ while not isError:
             firstLoad = True #! ต้อง Save dict ลง text ก่อน
             print(f'\n\n{"*"*50}\n')
             
-#ToDo : แก้ bug หลัง register user ใหม่ จะเป็นการ append 
