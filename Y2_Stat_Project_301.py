@@ -142,7 +142,7 @@ def find_md(numlist):
         sum_num = sum_num + k#บวกค่าในลิตส์
     sum_num = sum_num / lennumlist#หาค่าM.D.
     md_value = round(sum_num,2)
-    print(f'\nมัธยฐาน คือ {C_GREEN}{md_value}{C_REST}')
+    print(f'\nส่วนเบี่ยงเบนเฉลี่ย คือ {C_GREEN}{md_value}{C_REST}')
 
 #!MAIN PROGRAM
 IS_RUN = True
