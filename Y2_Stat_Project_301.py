@@ -63,7 +63,7 @@ def numlist_input(inputset,menu = 0):
             print('\t2. ค่าต่่ำสุด Min')
             print('\t3. ค่ามัชฌิมเลขคณิต x̄ Mean')
             print('\t4. ค่ามัธยฐาน Median')
-            print(f'\t{C_RED}5. ฐานนิยม{C_RESET}')
+            print('\t5. ฐานนิยม Mode')
             print('\t6. ความเบี่ยงเบนเฉลี่ย Mean Deviation')
             print('\t7. ความเบี่ยงเบนมาตรฐาน Standard Deviation')
             print('\t8. ความแปรปรวน S2, Variance')
@@ -89,7 +89,7 @@ def numlist_input(inputset,menu = 0):
                 case 4:
                     find_median(numlist)
                 case 5:
-                    print(f'\n{C_MAGENTA}Soon{C_RESET}')
+                    find_mode(numlist)
                 case 6:
                     find_md(numlist)
                 case 7:
@@ -103,6 +103,7 @@ def numlist_input(inputset,menu = 0):
                     find_min(numlist)
                     find_mean(numlist)
                     find_median(numlist)
+                    find_mode(numlist)
                     find_md(numlist)
                     find_sd(numlist)
                     find_s_2(numlist)
@@ -248,6 +249,40 @@ def find_range(numlist):
     range_value = max_num - min_num
     print(f'\nค่าพิสัยคือ {C_GREEN}{range_value}{C_RESET}')
     print(f'\n{"*"*50}')
+
+def find_mode(numlist):
+    """ค่าฐานนิยม ( Mode ) คือ ค่าของข้อมูลตัวที่เกิดขึ้นบ่อยที่สุด หรือตัวที่มีความถี่มากที่สุด 
+    โดยปกติข้อมูล 1 ชุดจะมีฐานนิยมค่าเดียว แต่เป็นไปได้ที่ข้อมูลบางชุดอาจมีฐานนิยมมากกว่า 1 ค่า"""
+    num_counter = {
+    }
+    num_members = []
+    mode = ''
+    for num_i in numlist:
+        if(num_i in num_counter):#ถ้าเลขที่อยู่ในlistซ้ำกับเลขในDictที่มีอยู๋แล้วให้+1เพิ่มเป็นValue
+            num_counter[num_i] += 1
+        else:#ถ้าเลขยังไม่อยู่ในdictให้เซตเป็น1ไว้
+            num_counter[num_i] = 1
+
+    for (member,maxx) in num_counter.items() :#samachick,maxคือการเปลี่ยเทียบกับ.item()ที่มีค่าออกมาเป็นเซตๆ หรือ(samachick,max)=(x,y) เมื่อxและyเป็นค่าในnaplek.items()
+        if maxx == max(num_counter.values()):#หาค่าที่ซ้ำมากที่สุดของvalueทั้งหมดของdict และเทียบกับmaxxทุกๆตัว เพื่อหาsamachick
+            num_members.append(member)#เพื่อเพิ่มไว้ดูว่ามีฐานนิยมที่เป็นสมาชิกกี่ตัว และตัวไหนบ้างที่เป็น
+    len_num_members = len(num_members)
+    ishave_mode = True
+    for i in range(len_num_members):
+        if len(num_members) == 1:
+            mode = str(num_members[i])
+        elif len(num_members) > 1 and len(num_members) < 3:#ถ้าสมาชิกของnumมากกว่า0และน้อยกว่า3ให้ปริ้นฐานนิยมออกมาได้(ฐานนิยมมีได้มากสุด2ตัว)
+            mode = mode + ', '+ str(num_members[i])
+        else :#แต่ถ้าสมาชิกของnumไม่อยู่ในเงื่อนไข
+            ishave_mode = False
+
+    if ishave_mode is True :
+        mode = mode.replace(',','',1)
+        print(f'\nค่าฐานนิยมมี {C_BLUE}{len_num_members} ค่า{C_RESET} คือ {C_GREEN}{mode}{C_RESET}')
+        print(f'\n{"*"*50}')
+    else :
+        print(f'\n{C_GREEN}ไม่มีค่าฐานนิยม{C_RESET}')
+        print(f'\n{"*"*50}')
 
 #!MAIN PROGRAM
 IS_RUN = True
