@@ -1,5 +1,8 @@
 """โปรแกรมคำนวณค่าสถิติ"""
 import math
+import time
+import os
+import sys
 
 def clearscreen():
     """ฟังก์ชั่น ล้างหน้าจอ terminal"""
@@ -18,7 +21,7 @@ C_CYAN = '\u001b[36m'
 C_WHITE = '\u001b[37m'
 C_RESET = '\u001b[0m'
 
-def numlist_input(inputset,menu = 0):
+def numlist_input(inputset,bypassinput = 0,menu = 0):
     """ฟังก์ชั่น รับชุดตัวเลข ที่มีการทำงานสองแบบ
     1. รับตัวเลข 1 ตัวก่อน
     2. รับตัวเลขมาทั้งชุด
@@ -26,35 +29,40 @@ def numlist_input(inputset,menu = 0):
     numlist = []
     is_error = False
     try:
-        if len(inputset[0:10].replace(', ', ',').replace(',', ' ').split(" ")) == 1:
-            inputset = float(inputset)
-            numlist.append(inputset)
-            print('พิมพ์ 0 เพื่อจบการกรอกเลข')
-            while True:
-                if len(numlist) <= 99:
-                    inputset = float(input(f'\t{C_RESET}กรอกตัวเลขเพิ่มเติม (1-999) ตัวที่ : {C_BLUE}{len(numlist)+1}{C_RESET} >>> {C_GREEN}'))
-                    if inputset > 0 and inputset < 1000:
-                        numlist.append(inputset)
+        if bypassinput == 0 :
+            if len(inputset[0:10].replace(', ', ',').replace(',', ' ').split(" ")) == 1:
+                inputset = float(inputset)
+                numlist.append(inputset)
+                print('พิมพ์ 0 เพื่อจบการกรอกเลข')
+                while True:
+                    if len(numlist) <= 99:
+                        inputset = float(input(f'\t{C_RESET}กรอกตัวเลขเพิ่มเติม (1-999) ตัวที่ : {C_BLUE}{len(numlist)+1}{C_RESET} >>> {C_GREEN}'))
+                        if inputset > 0 and inputset < 1000:
+                            numlist.append(inputset)
+                        else:
+                            print(f'\n{C_RESET}{"*"*50}\n')
+                            print('เสร็จสิ้นการกรอกข้อมูล')
+                            print(f'{C_RESET}ชุดข้อมูลคือ (ขนาดชุดข้อมูล {C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}')
+                            break
                     else:
-                        print(f'\n{C_RESET}{"*"*50}\n')
+                        print(f'\n{"*"*50}\n')
                         print('เสร็จสิ้นการกรอกข้อมูล')
                         print(f'{C_RESET}ชุดข้อมูลคือ (ขนาดชุดข้อมูล {C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}')
                         break
-                else:
-                    print(f'\n{"*"*50}\n')
-                    print('เสร็จสิ้นการกรอกข้อมูล')
-                    print(f'{C_RESET}ชุดข้อมูลคือ (ขนาดชุดข้อมูล {C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}')
-                    break
+            else:
+                numlist = map(float, inputset.replace(', ', ',').replace(',', ' ').split(" "))
+                numlist = list(numlist) #! ทำให้ Map เป็น List
+                if len(numlist) > 100:
+                    print(f'{C_RESET}ค่าที่รับมา มีเกินจำนวนที่แนะนำ 100 ค่า ({C_RED}{len(numlist)} ค่า{C_RESET}) ต้องการตัดส่วนเกินออกหรือไม่ [ Y / N ] ?')
+                    quest = input(f'\t>>>{C_GREEN} ')
+                    resetcolor()
+                    if quest.upper() in ['Y']:
+                        numlist = numlist[0:100] #! เอาแค่ 100 ตัว
+                print(f'{C_RESET}ชุดข้อมูลคือ (ขนาดชุดข้อมูล {C_GREEN}{len(numlist)}{C_RESET} ค่า) : {C_BLUE}{numlist}{C_RESET}')
         else:
-            numlist = map(float, inputset.replace(', ', ',').replace(',', ' ').split(" "))
-            numlist = list(numlist) #! ทำให้ Map เป็น List
-            if len(numlist) > 100:
-                print(f'{C_RESET}ค่าที่รับมา มีเกินจำนวนที่แนะนำ 100 ค่า ({C_RED}{len(numlist)} ค่า{C_RESET}) ต้องการตัดส่วนเกินออกหรือไม่ [ Y / N ] ?')
-                quest = input(f'\t>>>{C_GREEN} ')
-                resetcolor()
-                if quest.upper() in ['Y']:
-                    numlist = numlist[0:100] #! เอาแค่ 100 ตัว
-            print(f'{C_RESET}ชุดข้อมูลคือ (ขนาดชุดข้อมูล {C_GREEN}{len(numlist)}{C_RESET} ค่า) : {C_BLUE}{numlist}{C_RESET}')
+            numlist = inputset
+            print('รับค่าผ่านไฟล์ text สำเร็จ')
+            print(f'{C_RESET}ชุดข้อมูลคือ (ขนาดชุดข้อมูล {C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}')
 
         print(f'\n{"*"*50}\n')
         if menu == 0:
@@ -110,6 +118,68 @@ def numlist_input(inputset,menu = 0):
                     find_range(numlist)
                 case _ :
                     print(f'\n{C_RED}พบข้อผิดพลาด กรุณาเช็คตัวเลขที่ท่านกรอกมา{C_RESET}\n')
+
+MYPATH = os.path.dirname(os.path.abspath(sys.argv[0]))
+MYFILE = "NUM_SET.txt"
+TXTFILENAMELEN = len(MYFILE)
+TXTMODE = "load"
+
+def loaddatatxt():
+    """ฟังก์ชั่นโหลดข้อมูลจากไฟล์ txt"""
+    try:
+        if TXTMODE == "load":
+            with open(f'{MYPATH}/{MYFILE}', 'x', encoding="utf-8") as numformtxt:
+                print(f'{"*"*(35+TXTFILENAMELEN)}\n**    {C_GREEN}{MYFILE} Not Found สร้างไฟล์สำเร็จ{C_RESET}    **\n{"*"*(35+TXTFILENAMELEN)}\n')
+                numformtxt.writelines('รูปแบบของข้อมูล "1 20 31 41" หรือ "1,2,3,4,5,60" หรือ "1, 2, 3, 41, 10" เริ่มกรอกข้อมูลที่บรรทัดด้านล่างเป็นต้นไป (รองรับมากกว่า 1 บรรทัด) \n')
+                numformtxt.close()
+    except FileExistsError:
+        print('')
+        print(f'{"*"*(27+TXTFILENAMELEN)}\n**    {C_GREEN}{MYFILE} Found ใช้ไฟล์เก่า{C_RESET}    **\n{"*"*(27+TXTFILENAMELEN)}\n')
+
+    is_loaderror = False
+    tempnumlist_str = ''
+    numlist_txt = []
+    numtxt = open(f'{MYPATH}/{MYFILE}', 'r+', encoding="utf-8")
+    txtline = 1
+    print(f'{"*"*(24+TXTFILENAMELEN)}\n**    {C_GREEN}โหลดข้อมูลจาก {MYFILE}{C_RESET}    **\n{"*"*(24+TXTFILENAMELEN)}\n')
+    try:
+        for i in numtxt:
+            if txtline > 1:
+                numtxt_temp = i
+                tempnumlist_str += numtxt_temp.replace('\n', ' ')
+                print(tempnumlist_str) #!DEBUG
+            txtline += 1
+        if not tempnumlist_str: #? ถ้า List ว่าง = False
+            print('ไม่พบข้อมูลใน txt')
+            is_loaderror = True #!ให้ไม่ขึ้น Loaddone
+            for i in range(3,0,-1):
+                print(f'Delay {i}s',end='.\n')
+                time.sleep(1)
+            clearscreen()
+            return 'empty'
+        numlist_txt = map(float, tempnumlist_str.replace(', ', ',').replace(',', ' ').split(" "))
+        numlist_txt = list(numlist_txt)
+        print(numlist_txt) #!DEBUG
+        print(f'\n\t{C_BLUE}Load Done...{C_RESET}')
+    except ValueError:
+        is_loaderror = True
+        print(f'\n{C_RED}เกิดข้อผิดพลาดขณะโหลดไฟล์ (ValueError) กรุณาตรวจสอบค่า ในข้อมูลที่บรรทัด {txtline-1} ว่าตัวสุดท้ายมีการเว้นไว้หรือไม่{C_RESET}')
+        print('\nError Detail : \n')
+        return 'error'
+    except IndentationError:
+        is_loaderror = True
+        print(f'\n{C_RED}เกิดข้อผิดพลาดขณะโหลดไฟล์ (IndentationError) กรุณาตรวจสอบการเว้นวรรค ในข้อมูลที่บรรทัด {txtline-1}{C_RESET}')
+        print('\nError Detail : \n')
+        return 'error'
+    finally:
+        if is_loaderror is False:
+            print(f'\n{"*"*(31+TXTFILENAMELEN)}\n**    {C_GREEN}โหลดข้อมูลจาก {MYFILE} เสร็จสิ้น{C_RESET}    **\n{"*"*(31+TXTFILENAMELEN)}\n')
+    if is_loaderror is False:
+        for i in range(3,0,-1):
+            print(f'Delay {i}s',end='.\n')
+            time.sleep(1)
+        clearscreen()
+        return numlist_txt
 
 def find_min(numlist):
     """แสดงค่าน้อยที่สุดในช่วงข้อมูล"""
@@ -268,6 +338,7 @@ def find_mode(numlist):
             num_members.append(member)#เพื่อเพิ่มไว้ดูว่ามีฐานนิยมที่เป็นสมาชิกกี่ตัว และตัวไหนบ้างที่เป็น
     len_num_members = len(num_members)
     ishave_mode = True
+    num_members.sort()
     for i in range(len_num_members):
         if len(num_members) == 1:
             mode = str(num_members[i])
@@ -289,10 +360,22 @@ IS_RUN = True
 clearscreen()
 while IS_RUN:
     try:
-        print(f'{C_RESET}{"*"*50}\n')
-        num = input(f'{C_RESET}กรอกตัวเลข (เป็นชุด หรือ ทีละตัว) >>> {C_GREEN}')
-        print(f'{C_RESET}\n{"*"*50}\n')
-        numlist_input(num)
+        loadtemp = loaddatatxt() #!เพื่อ Load เพียงครั้งเดียว
+        match loadtemp :
+            case 'empty':
+                print(f'{C_RESET}{"*"*50}\n')
+                num = input(f'{C_RESET}กรอกตัวเลข (เป็นชุด หรือ ทีละตัว) >>> {C_GREEN}')
+                print(f'{C_RESET}\n{"*"*50}\n')
+                numlist_input(num)
+            case 'error':
+                print('การโหลดข้อมูลจากไฟล์ txt ผิดพลาด ใช้งานการกรอกข้อมูลด้วยมือ\n')
+                print(f'{C_RESET}{"*"*50}\n')
+                num = input(f'{C_RESET}กรอกตัวเลข (เป็นชุด หรือ ทีละตัว) >>> {C_GREEN}')
+                print(f'{C_RESET}\n{"*"*50}\n')
+                numlist_input(num)
+            case _ :
+                numlist_input(loadtemp,1) #! (loadtemp,X,Y) 1 คือ bypass input (!=0)
+
     finally:
         print(f'\n{C_RESET}ต้องการทำงานอีกครั้งหรือไม่ [ Y / N ] ?')
         q = input(f'\t>>>{C_GREEN} ')
