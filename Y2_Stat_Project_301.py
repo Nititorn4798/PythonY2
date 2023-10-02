@@ -50,7 +50,7 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
                         print(f'{C_RESET}ชุดข้อมูลคือ (ขนาดชุดข้อมูล {C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}')
                         break
             else:
-                numlist = map(float, inputset.replace(', ', ',').replace(',', ' ').split(" "))
+                numlist = map(float, inputset.replace(', ', ',').replace(' ,', ',').replace(',', ' ').split(" "))
                 numlist = list(numlist) #! ทำให้ Map เป็น List
                 if len(numlist) > 100:
                     print(f'{C_RESET}ค่าที่รับมา มีเกินจำนวนที่แนะนำ 100 ค่า ({C_RED}{len(numlist)} ค่า{C_RESET}) ต้องการตัดส่วนเกินออกหรือไม่ [ Y / N ] ?')
@@ -157,7 +157,7 @@ def loaddatatxt():
                 time.sleep(1)
             clearscreen()
             return 'empty'
-        numlist_txt = map(float, tempnumlist_str.replace(', ', ',').replace(',', ' ').split(" "))
+        numlist_txt = map(float, tempnumlist_str.replace(', ', ',').replace(' ,', ',').replace(',', ' ').split(" "))
         numlist_txt = list(numlist_txt)
         print(numlist_txt) #!DEBUG
         print(f'\n\t{C_BLUE}Load Done...{C_RESET}')
