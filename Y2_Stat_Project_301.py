@@ -4,6 +4,16 @@ import time
 import os
 import sys
 
+try:
+    from prettytable import PrettyTable
+    print('\u001b[32m',"Prettytable Module is installed.",'\u001b[0m')
+    time.sleep(0.3)
+except ImportError:
+    print('\u001b[31m',"ท่านยังไม่ได้ติดตั้งโมดูล prettytable")
+    print(" ท่านสามารถติดตั้งโดยการใช้คำสั่ง '\u001b[32mpython -m pip install -U prettytable\u001b[31m'\u001b[0m")
+    raise
+from prettytable import PrettyTable
+
 def clearscreen():
     """ฟังก์ชั่น ล้างหน้าจอ terminal"""
     print('\033c')
@@ -67,16 +77,8 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
         print(f'\n{"*"*50}\n')
         if menu == 0:
             print('เลือกโหมดการคำนวณที่ต้องการ')
-            print('\t1. ค่าสูงสุด Max')
-            print('\t2. ค่าต่่ำสุด Min')
-            print('\t3. ค่ามัชฌิมเลขคณิต x̄ Mean')
-            print('\t4. ค่ามัธยฐาน Median')
-            print('\t5. ฐานนิยม Mode')
-            print('\t6. ความเบี่ยงเบนเฉลี่ย Mean Deviation')
-            print('\t7. ความเบี่ยงเบนมาตรฐาน Standard Deviation')
-            print('\t8. ความแปรปรวน S2, Variance')
-            print('\t9. ค่าพิสัยของคะแนน Range')
-            print('\t999. ทุกการคำนวณ')
+            print('\t1. ไม่แจกแจง')
+            print('\t2. แจกแจง')
             print(f'\n{"*"*50}\n')
             menu = int(input(f'\t>>>{C_GREEN} '))
             print(f'\n{C_RESET}{"*"*50}')
@@ -89,33 +91,40 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
         if is_error is False:
             match menu:
                 case 1:
-                    find_max(numlist)
+                    print('\nเลือกโหมดการคำนวณแบบไม่แจกแจง ที่ต้องการ')
+                    print('\t1. ค่าสูงสุด Max')
+                    print('\t2. ค่าต่่ำสุด Min')
+                    print('\t3. ค่ามัชฌิมเลขคณิต x̄ Mean')
+                    print('\t4. ค่ามัธยฐาน Median')
+                    print('\t5. ฐานนิยม Mode')
+                    print('\t6. ความเบี่ยงเบนเฉลี่ย Mean Deviation')
+                    print('\t7. ความเบี่ยงเบนมาตรฐาน Standard Deviation')
+                    print('\t8. ความแปรปรวน S2, Variance')
+                    print('\t9. ค่าพิสัยของคะแนน Range')
+                    print(f'\n{"*"*50}\n')
+                    menu_x = int(input(f'\t>>>{C_GREEN} '))
+                    print(f'\n{C_RESET}{"*"*50}')
+                    match menu_x:
+                        case 1 :
+                            find_max(numlist)
+                        case 2 :
+                            find_min(numlist)
+                        case 3 :
+                            find_mean(numlist)
+                        case 4 :
+                            find_median(numlist)
+                        case 5 :
+                            find_mode(numlist)
+                        case 6 :
+                            find_md(numlist)
+                        case 7 :
+                            find_sd(numlist)
+                        case 8 :
+                            find_s_2(numlist)
+                        case 9 :
+                            find_range(numlist)
                 case 2:
-                    find_min(numlist)
-                case 3:
-                    find_mean(numlist)
-                case 4:
-                    find_median(numlist)
-                case 5:
-                    find_mode(numlist)
-                case 6:
-                    find_md(numlist)
-                case 7:
-                    find_sd(numlist)
-                case 8:
-                    find_s_2(numlist)
-                case 9:
-                    find_range(numlist)
-                case 999:
-                    find_max(numlist)
-                    find_min(numlist)
-                    find_mean(numlist)
-                    find_median(numlist)
-                    find_mode(numlist)
-                    find_md(numlist)
-                    find_sd(numlist)
-                    find_s_2(numlist)
-                    find_range(numlist)
+                    test01(numlist)
                 case _ :
                     print(f'\n{C_RED}พบข้อผิดพลาด กรุณาเช็คตัวเลขที่ท่านกรอกมา{C_RESET}\n')
 
@@ -152,7 +161,7 @@ def loaddatatxt():
         if not tempnumlist_str: #? ถ้า List ว่าง = False
             print('ไม่พบข้อมูลใน txt')
             is_loaderror = True #!ให้ไม่ขึ้น Loaddone
-            for i in range(3,0,-1):
+            for i in range(2,0,-1):
                 print(f'Delay {i}s',end='.\n')
                 time.sleep(1)
             clearscreen()
@@ -175,7 +184,7 @@ def loaddatatxt():
         if is_loaderror is False:
             print(f'\n{"*"*(31+TXTFILENAMELEN)}\n**    {C_GREEN}โหลดข้อมูลจาก {MYFILE} เสร็จสิ้น{C_RESET}    **\n{"*"*(31+TXTFILENAMELEN)}\n')
     if is_loaderror is False:
-        for i in range(3,0,-1):
+        for i in range(1,0,-1):
             print(f'Delay {i}s',end='.\n')
             time.sleep(1)
         clearscreen()
@@ -355,6 +364,136 @@ def find_mode(numlist):
         print(f'\n{C_GREEN}ไม่มีค่าฐานนิยม{C_RESET}')
         print(f'\n{"*"*50}')
 
+def test01(numlist) :
+    """ฟังก์ชั่นหา"""
+    num_min = numlist[0]
+    num_max = 0
+    f_mom_last = 0
+    f_num={
+    }
+    j = 1
+    low_upper_class = {
+    }#ขีดจำกัดล่างและบนในรูปแบบของdict
+    test01_num_table = PrettyTable()
+    test01_num_table.align = "r"
+    test01_num_table.field_names = ["ช่วงคะแนน", "ขีดจำกัดล่าง", "ขีดจำกัดบน", "จุดกลางชั้น", "ความถี่", "ความถี่สะสม", "fx", "สัดส่วน", "ร้อยละ"]
+
+    for i in numlist:
+        if i > num_max:
+            num_max = i
+    len_numlist_x = len(numlist)
+    for i in range(len_numlist_x):
+        if numlist[i] < num_min:
+            num_min = numlist[i]
+
+    print(f'พิสัย : {C_GREEN}{(num_max - (num_min))}{C_RESET}')
+    if (num_max - (num_min)) < 5 :
+        print('ค่าพิสัยน้อยกว่า 5 ใช้รูปแบบการแจกแจงไม่ได้')
+        return 0
+    max_class = ((num_max - (num_min)) + 1) / 2
+    max_class = min(max_class, 15)
+    while True :
+        print(f'สามารถใช้ข้อมูลจำนวนชั้นได้มากสุด : {C_RED}{max_class}{C_RESET}')
+        num_class_interval = int(input(f'\tกรอกจำนวนชั้นที่ต้องการ >>>{C_GREEN} '))
+        resetcolor()
+        if (num_class_interval > (num_max - ((num_min)) + 1) / 2) :
+            print(f'{C_RED}ชั้นมีจำนวนมากกว่าความกว้างของอันตรภาคชั้น กรุณากรอกชั้นใหม่อีกครั้ง{C_RESET}')
+        elif (num_class_interval < 3) or (num_class_interval > 15) :
+            print(f'{C_RED}อันตรภาคชั้นต้องอยู่ระหว่าง 3-15 ชั้น กรุณากรอกชั้นใหม่อีกครั้ง{C_RESET}')
+        else:
+            break
+    range_x = math.ceil(((num_max - (num_min)) + 1) / num_class_interval)# ความกว้างของอัตราภาคแบบจำนวนเต็มที่ต้อง+1เพื่อบวกจำนวนตัวมันเอง
+    lower_class_lim = num_min #ขีดจำกัดล่างเริ่มต้นแถว1
+    upper_class_lim = (num_min + range_x) - 1#ขีดจำกัดบนเริ่มต้นแถว1
+    low_upper_class[lower_class_lim] = upper_class_lim
+    for i in range(1,num_class_interval):
+        lower_class_lim = upper_class_lim + 1#ขีดจำกัดล่างตั้งแต่แถว2ขึ้นไป
+        upper_class_lim = (lower_class_lim + range_x) - 1#ขีดจำกัดบนตั้งแต่แถว2ขึ้นไป
+        low_upper_class[lower_class_lim] = upper_class_lim
+    print(f'ความกว้างของอันตรภาค : {C_GREEN}{range_x}{C_RESET}')#แสดงความกว้างของอันตรภาคชั้น
+    print(low_upper_class)#แสดงขีดจำกัดล่างและบนในรูปแบบของdict
+
+    table_martrix = []
+    
+    matrx_ptr_column = 0 #! Pointer เมทริกซ์ คอลัมน์
+    matrx_ptr_row = 0 #! Pointer เมทริกซ์ แถว
+    #แสดงค่าในตาราง
+    for (member,maxx) in low_upper_class.items() :#member,maxxคือการเปลี่ยเทียบกับ.item()ที่มีค่าออกมาเป็นเซตๆ หรือ(member,maxx)=(x,y) เมื่อxและyเป็นค่าในnum_taw.items()
+        print(j,"|",member,"-",maxx,"|")
+        j = j + 1
+        table_martrix.append(["",0,0,0,0,0,0,0,0])
+        table_martrix[matrx_ptr_row][matrx_ptr_column] = f'{member} - {maxx}'
+        matrx_ptr_row = matrx_ptr_row + 1
+
+    #หาขีดจำกัดล่างและบน
+    matrx_ptr_column = 1
+    matrx_ptr_row = 0
+    for (member,maxx) in low_upper_class.items() :#member,maxxคือการเปลี่ยเทียบกับ.item()ที่มีค่าออกมาเป็นเซตๆ หรือ(member,maxx)=(x,y) เมื่อxและyเป็นค่าในnum_taw.items()
+        print(j,"ขีดจำกัดล่าง|",member-0.5,"-",maxx+0.5,"|ขีดจำกัดบน")
+        j = j + 1
+        table_martrix[matrx_ptr_row][matrx_ptr_column] = f'{member - 0.5}'
+        table_martrix[matrx_ptr_row][matrx_ptr_column + 1] = f'{maxx + 0.5}'
+        matrx_ptr_row = matrx_ptr_row + 1
+
+    #หาจุดกึ่งกลาง
+    matrx_ptr_column = 3
+    matrx_ptr_row = 0
+    for (member,maxx) in low_upper_class.items() :#member,maxxคือการเปลี่ยเทียบกับ.item()ที่มีค่าออกมาเป็นเซตๆ หรือ(member,maxx)=(x,y) เมื่อxและyเป็นค่าในnum_taw.items()
+        print(j,"จุดกึ่งกลาง|",((member-0.5)+(maxx+0.5))/2,"|")
+        j = j + 1
+        table_martrix[matrx_ptr_row][matrx_ptr_column] = f'{((member - 0.5) + (maxx + 0.5)) / 2}'
+        matrx_ptr_row = matrx_ptr_row + 1
+
+    #หาความถี่
+    matrx_ptr_column = 4
+    matrx_ptr_row = 0
+    for (member,maxx) in low_upper_class.items() :#member,maxxคือการเปลี่ยเทียบกับ.item()ที่มีค่าออกมาเป็นเซตๆ หรือ(member,maxx)=(x,y) เมื่อxและyเป็นค่าในnum_taw.items()
+        f_num[member] = 0
+        len_numlist = len(numlist)
+        for k in range(len_numlist):
+            if (numlist[k] >= member) and (numlist[k] <= maxx) :
+                f_num[member] += 1
+    # print(f_num)สำหรับแสดงค่าในf_num
+    print(f_num)
+    for (f_mem,f_mom) in f_num.items() : #!mem key ขอบล่าง แต่ชั้น fmon คือความถี่
+        print(j,"ความถี่|",f_mom,"|")
+        j = j + 1
+        table_martrix[matrx_ptr_row][matrx_ptr_column] = f'{f_mom}'
+        #?หาสัดส่วน ร้อยละ
+        table_martrix[matrx_ptr_row][matrx_ptr_column + 2] = f'{float(table_martrix[matrx_ptr_row][3]) * float(table_martrix[matrx_ptr_row][4])}'
+        table_martrix[matrx_ptr_row][matrx_ptr_column + 3] = f'{f_mom / sum(f_num.values()):.3f}'
+        table_martrix[matrx_ptr_row][matrx_ptr_column + 4] = f'{(f_mom / sum(f_num.values())) * 100:.3f}'
+        matrx_ptr_row = matrx_ptr_row + 1
+
+    #ค่าความถี่สะสม
+    matrx_ptr_column = 5
+    matrx_ptr_row = 0
+    for (f_mem,f_mom) in f_num.items() : #!f mem key f mom value
+        f_mom_last = f_mom_last + f_mom
+        print(j,"ความถี่สะสม|",f_mom_last,"|") #!ความถี่สะสม
+        j = j + 1
+        table_martrix[matrx_ptr_row][matrx_ptr_column] = f'{f_mom_last}'
+        matrx_ptr_row = matrx_ptr_row + 1
+
+    #!ส่วนการแสดงตาราง
+    len_tmartx = len(table_martrix)
+    for i_mt in range(len_tmartx) :
+        print(table_martrix[i_mt])
+
+    len_num_martrix = len(table_martrix)
+    for i in range(len_num_martrix):
+        test01_num_table.add_row([table_martrix[i][0], table_martrix[i][1], table_martrix[i][2],
+                            table_martrix[i][3], table_martrix[i][4], table_martrix[i][5],
+                            table_martrix[i][6], table_martrix[i][7], table_martrix[i][8]])
+    print(f'\n\n{test01_num_table}')
+    sum_percent = 0
+    for i in range(len_num_martrix) :
+        sum_percent = sum_percent + float(table_martrix[i][8])
+    sum_ratio = 0
+    for i in range(len_num_martrix) :
+        sum_ratio = sum_ratio + float(table_martrix[i][7])
+    print(f'|           | {len_numlist_x}                   |                              |         {sum_ratio:.2f} | {math.trunc(sum_percent):.3f}|')
+    print( '+-----------+----------------------+------------------------------+--------------+--------+')
 #!MAIN PROGRAM
 IS_RUN = True
 clearscreen()
