@@ -3,35 +3,68 @@ import math
 import time
 import os
 import sys
-
+import subprocess
+import random
+# pylint: disable=C0301
 try:
     from prettytable import PrettyTable, SINGLE_BORDER
     print('\u001b[32m',"\n✔ Prettytable Module is installed.",'\u001b[0m')
-    time.sleep(0.1)
 except ImportError:
     print('\u001b[41m',"✖ You have not installed the 'Prettytable' module.")
     print("\u001b[0m ✖ You can install 'Prettytable' using the command \u001b[31m'\u001b[32mpython -m pip install -U prettytable\u001b[31m'","\u001b[0m")
     raise
 from prettytable import PrettyTable
 
+C_BLACK = '\u001b[30m'
+C_RED = '\u001b[91m'
+C_GREEN = '\u001b[92m'
+C_YELLOW = '\u001b[93m'
+C_BLUE = '\u001b[94m'
+C_MAGENTA = '\u001b[95m'
+C_CYAN = '\u001b[96m'
+C_WHITE = '\u001b[97m'
+C_RESET = '\u001b[0m'
+C_BOLD = '\u001b[1m'
+C_UNDERLINE = '\u001b[4m'
+
+try:
+    import ctypes
+    if ctypes.windll.shell32.IsUserAnAdmin():
+        CMD_CM = "reg add HKEY_CURRENT_USER\Console /v VirtualTerminalLevel /t REG_DWORD /d 1" # pylint: disable=W1401 # pyright: ignore[reportInvalidStringEscapeSequence]
+        fixcolor = subprocess.Popen(CMD_CM, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        if fixcolor.stdin is not None:
+            fixcolor.stdin.write('Yes')
+            fixcolor.stdin.flush()
+            stdout, stderr = fixcolor.communicate()
+            print("\u001b[32m","\n✔ Enabling ANSI Color support in the Windows console was successful.")
+            print("\u001b[32m","\n✔ If colors are displayed abnormally, please restart the program to use ANSI colors.")
+            if stderr:
+                print("Error:")
+                print(stderr)
+            fixcolor.wait()
+        else:
+            print("\n\n✖ Enabling ANSI Color support in the Windows console was unsuccessful.")
+except ImportError:
+    pass
+
+DELAY = 0
+
 def clearscreen():
     """ฟังก์ชั่น ล้างหน้าจอ terminal"""
-    # pass
+    if DELAY > 0 :
+        emoji = ['Made With ❤️ By CS65','🔥','😊','💀','👍','เกรด A สถิติ 🙏','✔️','🤔','🎃','😳','🥰']
+        for i in range(1,DELAY+1):
+            block_print = ((i / (DELAY)) * 100)
+            for _ in range(int(block_print)) :
+                print('▒',end='')
+                time.sleep(0.001)
+            print(f'{C_GREEN} {math.ceil(block_print)} % {emoji[random.randrange(0,len(emoji))]} {C_RESET}',end='\r')
+            time.sleep(1)
     print('\033c',end='')
 
 def resetcolor():
     """ฟังก์ชั่นรีเซ็ทค่าสี"""
     print('\u001b[0m',end='')
-
-C_BLACK = '\u001b[30m'
-C_RED = '\u001b[31m'
-C_GREEN = '\u001b[32m'
-C_YELLOW = '\u001b[33m'
-C_BLUE = '\u001b[34m'
-C_MAGENTA = '\u001b[35m'
-C_CYAN = '\u001b[36m'
-C_WHITE = '\u001b[37m'
-C_RESET = '\u001b[0m'
 
 MYPATH = os.path.dirname(os.path.abspath(sys.argv[0]))
 MYFILE = "NUM_SET.txt"
@@ -45,6 +78,11 @@ textset = {"en": {
     "ไฟล์ถูกสร้างสำเร็จแล้ว": "file created successfully.",
     "พบแล้ว ใช้ไฟล์ที่มีอยู่": "Discovered, Utilize the existing file.",
     "การตั้งค่าภาษาปัจจุบันคือ": "Current language setting is",
+    "! เปิดใช้งานการดีบั๊กค่าระหว่างคำนวณแล้ว": "! Enables debugging of values during calculation.",
+    '! ตั้งค่าหน่วงเวลาล้างจอ สำเร็จแล้ว': '! The screen clearing delay setting has been successfully set.',
+    "! ไม่สามารถเรียกการตั้งค่าการหน่วงเวลาได้": "! Unable to retrieve delay setting.",
+    "ตั้งค่าหน่วงเวลาเป็น": "Set Delay to",
+    "วินาที": "seconds.",
     "โหลดข้อมูลจาก": "Loading data from",
     "เสร็จสิ้น": "has been completed.",
     "ไม่พบข้อมูลในไฟล์ txt": "Data not found in the txt file.",
@@ -105,8 +143,8 @@ textset = {"en": {
     "ชั้นมีจำนวนมากกว่าความกว้างของอันตรภาคชั้น กรุณากรอกชั้นใหม่อีกครั้ง": "The number of classes exceeds the width of the class intervals. Please enter the number of classes again.",
     "อันตรภาคชั้นต้องอยู่ระหว่าง 3-15 ชั้น กรุณากรอกชั้นใหม่อีกครั้ง": "The number of classes must be between 3-15. Please enter the number of classes again.",
     "ความกว้างของอันตรภาคชั้น :": "Width of class interval:",
-    "อัตราส่วนรวม   :":"Total Ratio   :",
-    "เปอร์เซ็นต์รวม   :":"Total Percent :",
+    "อัตราส่วนรวม   :": "Total Ratio   :",
+    "เปอร์เซ็นต์รวม   :": "Total Percent :",
     "ค่าความเบี่ยงเบนควอไทล์ คือ": "The quantile deviation value is",
     "ความเบี่ยงเบนมาตรฐาน SD. คือ": "Standard deviation SD. is",
     "ความแปรปรวน S2 คือ": "The variance S2 is",
@@ -115,23 +153,24 @@ textset = {"en": {
     "กรอกตัวเลข (เป็นชุด หรือ ทีละตัว) >>>": "Enter numbers (as sets or individually) >>>",
     "การโหลดข้อมูลจากไฟล์ txt ผิดพลาด ใช้งานการกรอกข้อมูลด้วยตนเอง": "Error loading data from txt file. Manual data entry is required.",
     "ต้องการรับข้อมูลผ่านไฟล์ txt หรือไม่": "Do you want to receive data via a txt file?",
-    "เพื่อใช้งานโปรแกรมอีกครั้งโดยใช้ชุดข้อมูลล่าสุด": "To run the program again using the latest data set.",
+    "เพื่อใช้งานโปรแกรมอีกครั้งโดยใช้ชุดข้อมูลล่าสุด": "To run the program again using the recent data set.",
     "ชุดข้อมูลล่าสุดคือ (ขนาดชุดข้อมูล": "The recent data set is (data set size",
     "ต้องการคำนวณอีกครั้งหรือไม่": "Do you want to calculate again?",
-    "จบการทำงาน": "End of operation"
+    "จบการทำงาน": "End of operation",
+    "จัดทำโดย": "Program prepared by"
 }}
 
 def gettext(textcode, bypass = False):
     "ฟังก์ชั่นภาษา"
     if CONFIGLANG == 'en' or bypass:
         return textset['en'][textcode]
-    else:
-        return textcode
+    return textcode
 
 #!ฟังก์ชั่นโหลดการตั้งค่าภาษา และ สร้างไฟล์ txt ถ้าไม่พบ
+CONFIGFILE = "settings_stat.txt"
 while True:
-    try: #TODO: บันทึกค่าภาษาที่ตั้งไว้ใน txt
-        configs = open(f'{MYPATH}/{MYFILE}', 'r+', encoding="utf-8")
+    try:
+        configs = open(f'{MYPATH}/{CONFIGFILE}', 'r+', encoding="utf-8")
         for line ,content in enumerate(configs) :
             if line == 1 :
                 tempconfig = content.replace('\n', '').replace(' = ', ' = ').split(" = ")
@@ -141,16 +180,44 @@ while True:
                         CONFIGLANG = input(f'{C_RED}\n✖ Language not found ({C_YELLOW}{CONFIGLANG}{C_RED}).\n✖ Please select language again [{C_YELLOW}en,th{C_RED}] >>> {C_GREEN}')
                         resetcolor()
                     else:
+                        configsave = open(f'{MYPATH}/{CONFIGFILE}', 'r', encoding="utf-8")
+                        configtemp = configsave.read()
+                        configsave.close()
+                        tempconfigtxt = configtemp.split('\n')
+                        tempconfigtxt[1] = f'languages [en,th] = {CONFIGLANG}'
+                        configsave = open(f'{MYPATH}/{CONFIGFILE}', 'w', encoding="utf-8")
+                        for i_config in tempconfigtxt :
+                            if i_config not in ['','\n'] :
+                                configsave.writelines(f'{i_config}\n')
+                        configsave.close()
                         break
+            if line == 2 :
+                tempconfig = content.replace('\n', '').replace(' = ', ' = ').split(" = ")
+                if tempconfig[-1].upper() in ['TRUE'] :
+                    ISDEBUG = True
+                    print(f'\n{C_YELLOW}{gettext("! เปิดใช้งานการดีบั๊กค่าระหว่างคำนวณแล้ว")}{C_RESET}')
+            if line == 3 :
+                tempconfig = content.replace('\n', '').replace(' = ', ' = ').split(" = ")
+                if tempconfig[-1].isnumeric() is True :
+                    DELAY = int(tempconfig[-1])
+                    print(f'\n{C_YELLOW}{gettext("! ตั้งค่าหน่วงเวลาล้างจอ สำเร็จแล้ว")} ({DELAY} {gettext("วินาที")}) {C_RESET}')
+                else:
+                    print(f'{C_RED}{gettext("! ไม่สามารถเรียกการตั้งค่าการหน่วงเวลาได้")}{C_YELLOW} {gettext("ตั้งค่าหน่วงเวลาเป็น")} 3 {gettext("วินาที")}')
+                    DELAY = 3
+                configs.close()
                 break
-        print(f'\n{gettext("การตั้งค่าภาษาปัจจุบันคือ")} {C_YELLOW}{CONFIGLANG}{C_RESET}')
+        print(f'\n{gettext("การตั้งค่าภาษาปัจจุบันคือ")} {C_BOLD}{C_YELLOW}{CONFIGLANG}{C_RESET}\n')
         break
+
     except FileNotFoundError:
-        with open(f'{MYPATH}/{MYFILE}', 'x', encoding="utf-8") as createconfig:
-            print(f'\n{C_BLUE}{MYFILE} {C_GREEN}{gettext("หาไม่เจอ", True)} {MYFILE} {gettext("ไฟล์ถูกสร้างสำเร็จแล้ว", True)}{C_RESET}\n')
-            createconfig.writelines('รูปแบบของข้อมูล "1 20 31 41" หรือ "1,2,3,4,5,60" หรือ "1, 2, 3, 41, 10" เริ่มกรอกข้อมูลที่บรรทัดด้านล่างเป็นต้นไป (รองรับมากกว่า 1 บรรทัด) (หากไม่ต้องการใช้ให้ทำให้บรรทัดถัดไปว่าง) \n')
-            createconfig.writelines('lang [en,th] = en\n')
+        with open(f'{MYPATH}/{CONFIGFILE}', 'x', encoding="utf-8") as createconfig:
+            print(f'{C_BLUE}{CONFIGFILE} {C_GREEN}{gettext("หาไม่เจอ", True)} {C_BLUE}{CONFIGFILE} {C_GREEN}{gettext("ไฟล์ถูกสร้างสำเร็จแล้ว", True)}{C_RESET}\n')
+            createconfig.writelines('#  นี่คือไฟล์ตั้งค่าภาษา สามารถตั้งภาษาได้โดยการเปลี่ยนค่า = en หรือ = th | เปลี่ยน DEBUG = True เพื่อแสดงค่าระหว่างที่คำนวณ | Delay = (วิ) เพื่อตั้งหน่วงเวลาล้างหน้าจอในหน่วยวินาที #\n')
+            createconfig.writelines('languages [en,th] = please-setup\n')
+            createconfig.writelines('DEBUG = False\n')
+            createconfig.writelines('Delay [sec] = 1\n')
             createconfig.close()
+
 
 output_table = PrettyTable()
 output_table.align = "r"
@@ -170,12 +237,13 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
         if bypassinput == 0 :
             if len(inputset[0:10].replace(', ', ',').replace(',', ' ').split(" ")) == 1:
                 inputset = float(inputset)
-                numlist.append(inputset)
+                if 0 < inputset < 1000:
+                    numlist.append(inputset)
                 print(f'{C_YELLOW}{gettext("พิมพ์")} {C_GREEN}0{C_YELLOW} {gettext("เพื่อจบการกรอกเลข")}{C_RESET}')
                 while True:
                     if len(numlist) <= 99:
                         while True :
-                            print(f'\t{C_RESET}{gettext("กรอกตัวเลขเพิ่มเติม (1-999) ตัวที่ :")} {C_BLUE}{len(numlist)+1}{C_RESET} >>> {C_GREEN}',end='')
+                            print(f'\t{C_RESET}{gettext("กรอกตัวเลขเพิ่มเติม (1-999) ตัวที่ :")} {C_BOLD}{C_BLUE}{len(numlist)+1}{C_RESET} >>> {C_GREEN}',end='')
                             inputset = input()
                             if inputset == '' or inputset.isnumeric() is False  :
                                 print(f'{C_RED}✖ {gettext("กรุณากรอกตัวเลขเท่านั้น")}{C_RESET}')
@@ -183,28 +251,28 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
                             else:
                                 inputset = float(inputset)
                                 break
-                        if inputset > 0 and inputset < 1000 :
+                        if 0 < inputset < 1000 :
                             numlist.append(inputset)
                         else:
                             print(f'\n{C_RESET}{"═"*50}\n')
                             print(f'{C_GREEN}✔ {gettext("เสร็จสิ้นการกรอกข้อมูล")}{C_RESET}')
-                            print(f'{C_RESET}✔ {gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}')
+                            print(f'{C_RESET}✔ {gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_BOLD}{C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}\n')
                             break
                     else:
                         print(f'\n{"═"*50}\n')
                         print(f'{C_GREEN}✔ {gettext("เสร็จสิ้นการกรอกข้อมูล")}{C_RESET}')
-                        print(f'{C_RESET}✔ {gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}')
+                        print(f'{C_RESET}✔ {gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_BOLD}{C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}\n')
                         break
             else:
                 numlist = map(float, inputset.replace(', ', ',').replace(' ,', ',').replace(',', ' ').split(" "))
                 numlist = list(numlist) #! ทำให้ Map เป็น List
                 if len(numlist) > 100:
-                    print(f'{C_RESET}{gettext("ค่าที่รับมา มีเกินจำนวนที่แนะนำ 100 ค่า (")}{C_RED}{len(numlist)} {gettext("ค่า")}{C_RESET}) {gettext("ต้องการตัดส่วนเกินออกหรือไม่")} [ Y / N ] ?')
+                    print(f'{C_RESET}{gettext("ค่าที่รับมา มีเกินจำนวนที่แนะนำ 100 ค่า (")}{C_BOLD}{C_RED}{len(numlist)} {gettext("ค่า")}{C_RESET}) {gettext("ต้องการตัดส่วนเกินออกหรือไม่")} [ Y / N ] ?')
                     quest = input(f'\t>>>{C_GREEN} ')
                     resetcolor()
                     if quest.upper() in ['Y']:
                         numlist = numlist[0:100] #! เอาแค่ 100 ตัว
-                print(f'{C_RESET}{gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_GREEN}{len(numlist)}{C_RESET} {gettext("ค่า")}) : {C_BLUE}{numlist}{C_RESET}')
+                print(f'{C_RESET}{gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_BOLD}{C_GREEN}{len(numlist)}{C_RESET} {gettext("ค่า")}) : {C_BLUE}{numlist}{C_RESET}')
         else:
             numlist = inputset
             if QUESTION.upper() not in ['R'] :
@@ -213,7 +281,7 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
             else:
                 print(f'\n{"═"*50}\n')
                 print(f'\n{gettext("ใช้ชุดข้อมูลเก่า สำเร็จ")}')
-            print(f'{C_RESET}{gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}\n')
+            print(f'{C_RESET}{gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_BOLD}{C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}\n')
 
         print(f'{"═"*50}\n')
         temp_last_numlist.extend(numlist)
@@ -233,7 +301,7 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
             print(f'\n{C_RESET}{"═"*50}')
 
     except ValueError:
-        print(f'\n{C_RED}✖ {gettext("พบข้อผิดพลาด กรุณาเช็คตัวเลขที่ท่านกรอกมา")}{C_RESET}')
+        print(f'{C_RED}✖ {gettext("พบข้อผิดพลาด กรุณาเช็คตัวเลขที่ท่านกรอกมา")}{C_RESET}')
         is_error = True
 
     finally:
@@ -256,7 +324,7 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
                         print(f'\t>>>{C_GREEN} ',end='')
                         menu_x = input()
                         if menu_x == '' or menu_x.isnumeric() is False  :
-                            print(f'{C_RED}✖ {gettext("กรุณากรอกตัวเลขเท่านั้น")}{C_RESET}')
+                            print(f'\n{C_RED}✖ {gettext("กรุณากรอกตัวเลขเท่านั้น")}{C_RESET}')
                         else:
                             menu_x = int(menu_x)
                             break
@@ -305,9 +373,9 @@ def loaddatatxt():
     try:
         if TXTMODE == "load":
             with open(f'{MYPATH}/{MYFILE}', 'x', encoding="utf-8") as numformtxt:
-                print(f'{C_BLUE}{MYFILE} {C_GREEN}{gettext("หาไม่เจอ")} {MYFILE} {gettext("ไฟล์ถูกสร้างสำเร็จแล้ว")}{C_RESET}\n')
-                numformtxt.writelines('รูปแบบของข้อมูล "1 20 31 41" หรือ "1,2,3,4,5,60" หรือ "1, 2, 3, 41, 10" เริ่มกรอกข้อมูลที่บรรทัดด้านล่างเป็นต้นไป (รองรับมากกว่า 1 บรรทัด) (หากไม่ต้องการใช้ให้ทำให้บรรทัดถัดไปว่าง) \n')
-                numformtxt.writelines('lang [en,th] = en\n')
+                print(f'\n{C_BLUE}{MYFILE} {C_GREEN}{gettext("หาไม่เจอ")} {MYFILE} {gettext("ไฟล์ถูกสร้างสำเร็จแล้ว")}{C_RESET}\n')
+                numformtxt.writelines('# รูปแบบของข้อมูล "1 20 31 41" หรือ "1,2,3,4,5,60" หรือ "1, 2, 3, 41, 10" เริ่มกรอกข้อมูลที่บรรทัดที่ 3 เป็นต้นไป (รองรับมากกว่า 1 บรรทัด) (หากไม่ต้องการใช้ให้ทำให้บรรทัดที่ 3 ว่าง) #\n')
+                numformtxt.writelines('# เริ่มกรอกบรรทัดถัดไป (ห้ามมีบรรทัดว่าง) #\n')
                 numformtxt.close()
     except FileExistsError:
         print('')
@@ -330,9 +398,6 @@ def loaddatatxt():
         if not tempnumlist_str: #? ถ้า List ว่าง = False
             print(f'{C_YELLOW}{gettext("ไม่พบข้อมูลในไฟล์ txt")}{C_RESET}')
             is_loaderror = True #!ให้ไม่ขึ้น Loaddone
-            for i in range(1,0,-1):
-                print(f'Delay {i}s',end='.\n')
-                time.sleep(1)
             print('\n')
             clearscreen()
             return 'empty'
@@ -355,9 +420,6 @@ def loaddatatxt():
         if is_loaderror is False:
             print(f'\n{C_GREEN}✔ {gettext("โหลดข้อมูลจาก")} {C_BLUE}{MYFILE} {C_GREEN}{gettext("เสร็จสิ้น")}{C_RESET}\n')
     if is_loaderror is False:
-        for i in range(1,0,-1):
-            print(f'Delay {i}s',end='.\n')
-            time.sleep(1)
         clearscreen()
         return numlist_txt
 
@@ -368,7 +430,7 @@ def find_min(numlist):
     for i in range(numlistlen):
         if numlist[i] < min_num:
             min_num = numlist[i]
-    print(f'\n{gettext("ค่าที่ต่่ำที่สุด คือ")} {C_GREEN}{min_num:,.2f}{C_RESET}')
+    print(f'\n{gettext("ค่าที่ต่่ำที่สุด คือ")} {C_BOLD}{C_GREEN}{min_num:,.2f}{C_RESET}')
     output_table.add_column('Min',[min_num])
 
 def find_max(numlist):
@@ -377,7 +439,7 @@ def find_max(numlist):
     for i in numlist:
         if i > max_num:
             max_num = i
-    print(f'\n{gettext("ค่าที่สูงที่สุด คือ")} {C_GREEN}{max_num:,.2f}{C_RESET}')
+    print(f'\n{gettext("ค่าที่สูงที่สุด คือ")} {C_BOLD}{C_GREEN}{max_num:,.2f}{C_RESET}')
     output_table.add_column('Max',[max_num])
 
 def find_median(numlist):
@@ -394,7 +456,7 @@ def find_median(numlist):
     else :
         numlistpos = round(numlistpos)  #แปลงเป็นintเพื่อใช้ระบุตำแหน่งในlist โดยปัดเศษลง
         total = numlist[numlistpos - 1] #สูตรเมื่อจำนวนเป็นเลขคี่
-    print(f'\n{gettext("ค่ามัธยฐาน คือ")} {C_GREEN}{total:,.2f}{C_RESET}')
+    print(f'\n{gettext("ค่ามัธยฐาน คือ")} {C_BOLD}{C_GREEN}{total:,.2f}{C_RESET}')
     output_table.add_column('Median',[f'{total:,.2f}'])
 
 def find_mean(numlist):
@@ -405,7 +467,7 @@ def find_mean(numlist):
     for i in numlist :
         mean = mean + i #บวกค่าในลิตส์
     mean = mean / numlistlen #หาค่าเฉลี่ยโดยการหาร
-    print(f'\n{gettext("ค่ามัชฌิมเลขคณิต คือ")} {C_GREEN}{mean:,.2f}{C_RESET}')
+    print(f'\n{gettext("ค่ามัชฌิมเลขคณิต คือ")} {C_BOLD}{C_GREEN}{mean:,.2f}{C_RESET}')
     output_table.add_column('Mean',[f'{mean:,.2f}'])
 
 def find_md(numlist):
@@ -431,7 +493,7 @@ def find_md(numlist):
         sum_num = sum_num + k#บวกค่าในลิตส์
     sum_num = sum_num / lennumlist#หาค่าM.D.
     md_value = round(sum_num,2)
-    print(f'\n{gettext("ความเบี่ยงเบนเฉลี่ย คือ")} {C_GREEN}{md_value:,.2f}{C_RESET}')
+    print(f'\n{gettext("ความเบี่ยงเบนเฉลี่ย คือ")} {C_BOLD}{C_GREEN}{md_value:,.2f}{C_RESET}')
     output_table.add_column('M.D.',[f'{md_value:,.2f}'])
 
 def find_sd(numlist):
@@ -454,7 +516,7 @@ def find_sd(numlist):
         sum_num = sum_num + k#บวกค่าในลิตส์
     sum_num = math.sqrt(sum_num / lennumlist)
     sd_value = round(sum_num,2)
-    print(f'\n{gettext("ความเบี่ยงเบนมาตรฐาน คือ")} {C_GREEN}{sd_value:,.2f}{C_RESET}')
+    print(f'\n{gettext("ความเบี่ยงเบนมาตรฐาน คือ")} {C_BOLD}{C_GREEN}{sd_value:,.2f}{C_RESET}')
     output_table.add_column('S.D.',[f'{sd_value:,.2f}'])
 
 def find_s_2(numlist):
@@ -477,7 +539,7 @@ def find_s_2(numlist):
         sum_num = sum_num + k#บวกค่าในลิตส์
     sum_num = sum_num / lennumlist
     s_2_value = round(sum_num,2)
-    print(f'\n{gettext("ความแปรปรวน คือ")} {C_GREEN}{s_2_value:,.2f}{C_RESET}')
+    print(f'\n{gettext("ความแปรปรวน คือ")} {C_BOLD}{C_GREEN}{s_2_value:,.2f}{C_RESET}')
     output_table.add_column('S2',[f'{s_2_value:,.2f}'])
 
 def find_range(numlist):
@@ -497,7 +559,7 @@ def find_range(numlist):
             min_num = numlist[i]
 
     range_value = max_num - min_num
-    print(f'\n{gettext("ค่าพิสัย คือ")} {C_GREEN}{range_value:,.2f}{C_RESET}')
+    print(f'\n{gettext("ค่าพิสัย คือ")} {C_BOLD}{C_GREEN}{range_value:,.2f}{C_RESET}')
     output_table.add_column('Range',[f'{range_value:,.2f}'])
 
 def find_mode(numlist):
@@ -508,7 +570,7 @@ def find_mode(numlist):
     num_members = []
     mode = ''
     for num_i in numlist:
-        if(num_i in num_counter):#ถ้าเลขที่อยู่ในlistซ้ำกับเลขในDictที่มีอยู๋แล้วให้+1เพิ่มเป็นValue
+        if num_i in num_counter:#ถ้าเลขที่อยู่ในlistซ้ำกับเลขในDictที่มีอยู๋แล้วให้+1เพิ่มเป็นValue
             num_counter[num_i] += 1
         else:#ถ้าเลขยังไม่อยู่ในdictให้เซตเป็น1ไว้
             num_counter[num_i] = 1
@@ -529,10 +591,10 @@ def find_mode(numlist):
 
     if ishave_mode is True :
         mode = mode.replace(',','',1)
-        print(f'\n{gettext("ค่าฐานนิยมมี")} {C_BLUE}{len_num_members} {gettext("ค่า")}{C_RESET} {gettext("คือ")} {C_GREEN}{mode}{C_RESET}')
+        print(f'\n{gettext("ค่าฐานนิยมมี")} {C_BOLD}{C_BLUE}{len_num_members} {gettext("ค่า")}{C_RESET} {gettext("คือ")} {C_BOLD}{C_GREEN}{mode}{C_RESET}')
         output_table.add_column('Mode',[mode])
     else :
-        print(f'\n{C_GREEN}{gettext("ไม่มีค่าฐานนิยม")}{C_RESET}')
+        print(f'\n{C_BOLD}{C_GREEN}{gettext("ไม่มีค่าฐานนิยม")}{C_RESET}')
         output_table.add_column('Mode',[gettext("ไม่มีค่าฐานนิยม")])
 
 def frequency_distribution(numlist) :
@@ -559,14 +621,14 @@ def frequency_distribution(numlist) :
         if numlist[i] < num_min:
             num_min = numlist[i]
 
-    print(f'\n{gettext("พิสัย")} : {C_GREEN}{(num_max - (num_min))}{C_RESET}')
+    print(f'\n{gettext("พิสัย")} : {C_BOLD}{C_GREEN}{(num_max - (num_min))}{C_RESET}')
     if (num_max - (num_min)) < 5 :
         print(f'{gettext("ค่าพิสัยน้อยกว่า 5 ใช้รูปแบบการแจกแจงไม่ได้")}')
         return 0
     max_class = ((num_max - (num_min)) + 1) / 2
     max_class = min(max_class, 15)
     while True :
-        print(f'{gettext("สามารถใช้ข้อมูลจำนวนชั้นได้มากสุด :")} {C_RED}{math.floor(max_class)}{C_RESET}')
+        print(f'{gettext("สามารถใช้ข้อมูลจำนวนชั้นได้มากสุด :")} {C_BOLD}{C_RED}{math.floor(max_class)}{C_RESET}')
         while True :
             num_class_interval = input(f'\t{gettext("กรอกจำนวนชั้นที่ต้องการ >>>")}{C_GREEN} ')
             if num_class_interval == '' or num_class_interval.isnumeric() is False  :
@@ -576,7 +638,7 @@ def frequency_distribution(numlist) :
                 break
         num_class_interval = int(num_class_interval)
         resetcolor()
-        if (num_class_interval > (num_max - (num_min) + 1) / 2) :
+        if num_class_interval > (num_max - (num_min) + 1) / 2 :
             print(f'{C_RED}\n✖ {gettext("ชั้นมีจำนวนมากกว่าความกว้างของอันตรภาคชั้น กรุณากรอกชั้นใหม่อีกครั้ง")}\n{C_RESET}')
         elif (num_class_interval < 3) or (num_class_interval > 15) :
             print(f'{C_RED}\n✖ {gettext("อันตรภาคชั้นต้องอยู่ระหว่าง 3-15 ชั้น กรุณากรอกชั้นใหม่อีกครั้ง")}\n{C_RESET}')
@@ -590,7 +652,7 @@ def frequency_distribution(numlist) :
         lower_class_lim = upper_class_lim + 1#ขีดจำกัดล่างตั้งแต่แถว2ขึ้นไป
         upper_class_lim = (lower_class_lim + range_x) - 1#ขีดจำกัดบนตั้งแต่แถว2ขึ้นไป
         low_upper_class[lower_class_lim] = upper_class_lim
-    print(f'\n{gettext("ความกว้างของอันตรภาคชั้น :")} {C_GREEN}{range_x}{C_RESET}')#แสดงความกว้างของอันตรภาคชั้น
+    print(f'\n{gettext("ความกว้างของอันตรภาคชั้น :")} {C_BOLD}{C_GREEN}{range_x}{C_RESET}')#แสดงความกว้างของอันตรภาคชั้น
 
     table_martrix = []
 
@@ -644,9 +706,20 @@ def frequency_distribution(numlist) :
 
     if ISDEBUG is True :
         print(f'{C_YELLOW}')
-        print(f'\tlow_upper_class {gettext("คือ")} \n{low_upper_class}')
-        print(f'\n\tf_num {gettext("คือ")} \n{f_num}')
-        print(f'\n\ttable_martrix {gettext("คือ")} \n\n{table_martrix}')
+        print(f'\tlow_upper_class {gettext("คือ")} \n\n{low_upper_class}')
+        print(f'\n\tf_num {gettext("คือ")} \n\n{f_num}')
+        print(f'\n\ttable_martrix {gettext("คือ")} \n')
+        print(f'{C_GREEN} │ ',end='')
+        for i, data in enumerate(table_martrix):
+            for j, data in enumerate(data):
+                if j % 2 == 0 :
+                    print(f'{C_GREEN}{data}',end=' │ ')
+                else :
+                    print(f'{C_YELLOW}{data}',end=' │ ')
+            if i < len(table_martrix) - 1 :
+                print('\n │ ',end='')
+            else:
+                print('')
         print(f'{C_RESET}')
 
     #!ส่วนการแสดงตาราง
@@ -655,7 +728,8 @@ def frequency_distribution(numlist) :
         frequency_distribution_num_table.add_row([table_martrix[i][0], table_martrix[i][1], table_martrix[i][2],
                             table_martrix[i][3], table_martrix[i][4], table_martrix[i][5],
                             table_martrix[i][6], table_martrix[i][7], table_martrix[i][8]])
-    print(f'\n\t{C_YELLOW}{gettext("ตารางแจกแจงความถี่")}{C_RESET}')
+    print(f'\n{"═"*50}\n')
+    print(f'\n\t{C_UNDERLINE}{C_CYAN}{gettext("ตารางแจกแจงความถี่")}{C_RESET}')
     print(f'\n{frequency_distribution_num_table}')
     sum_percent = 0
     for i in range(len_num_martrix) :
@@ -664,7 +738,7 @@ def frequency_distribution(numlist) :
     for i in range(len_num_martrix) :
         sum_ratio = sum_ratio + float(table_martrix[i][7])
 
-    print(f'\n\tN : {C_GREEN}{len_numlist_x}{C_RESET} \n\t{gettext("อัตราส่วนรวม   :")} {C_GREEN}{sum_ratio:.2f}{C_RESET} \n\t{gettext("เปอร์เซ็นต์รวม   :")} {C_GREEN}{math.trunc(sum_percent):.3f}{C_RESET}')
+    print(f'\n\tN : {C_BOLD}{C_GREEN}{len_numlist_x}{C_RESET} \n\t{gettext("อัตราส่วนรวม   :")} {C_BOLD}{C_GREEN}{sum_ratio:.2f}{C_RESET} \n\t{gettext("เปอร์เซ็นต์รวม   :")} {C_BOLD}{C_GREEN}{math.trunc(sum_percent):.3f}{C_RESET}')
 
     #?หาค่าสถิติ
     #!หาค่าความเบี่ยงเบนควอไทล์
@@ -681,7 +755,7 @@ def frequency_distribution(numlist) :
         if quartile_pointer_row - 1 >= 0 :
             f_l = float(table_martrix[quartile_pointer_row - 1][5]) #FL คือ ความถี่สะสมในชั้นก่อนหน้า
         else:
-            f_l = float(table_martrix[quartile_pointer_row][5]) #FL คือ ความถี่สะสมในชั้นก่อนหน้า
+            f_l = 0.0 #FL คือ ความถี่สะสมในชั้นก่อนหน้า
         rn_4 = (r_userinput * len_numlist_x) / 4 #rN/4 คือตำแหน่งของควอร์ไทล์
         qr_i = range_x #I คือ ความกว้างของอันตรภาคชั้น
         qr_l = float(table_martrix[quartile_pointer_row][1]) #L คือ ขอบล่างที่ควอร์ไทล์นั้นๆตั้งอยู่
@@ -690,17 +764,18 @@ def frequency_distribution(numlist) :
 
         if ISDEBUG is True :
             print(f'{C_YELLOW}')
-            print(f'\tR{r_userinput} {gettext("คือ")} {r_userinput}')
-            print(f'\tQuartile pointer row {gettext("คือ")} {quartile_pointer_row}')
-            print(f'\tQ_R {gettext("คือ")} {q_r}')
-            print(f'\tQr_L {gettext("คือ")} {qr_l}')
-            print(f'\tQr_I {gettext("คือ")} {qr_i}')
-            print(f'\tFL {gettext("คือ")} {f_l}')
+            print(f'\tPointer row {gettext("คือ")} {quartile_pointer_row}')
+            print(f'\tX (r) {gettext("คือ")} {r_userinput}')
+            print(f'\tLo (qr_l) {gettext("คือ")} {qr_l}')
+            print(f'\ti (qr_i) {gettext("คือ")} {qr_i}')
+            print(f'\tF (f_l) {gettext("คือ")} {f_l}')
+            print(f'\tf (f_x) {gettext("คือ")} {f_x}')
+            print(f'\tQ{r_userinput} {gettext("คือ")} {q_r}')
             print(f'{C_RESET}')
         return q_r
 
     q_d = (find_r_quartile(3) - find_r_quartile(1)) / 2
-    print(f'\n\t{gettext("ค่าความเบี่ยงเบนควอไทล์ คือ")} {C_BLUE}{q_d:,.3f}{C_RESET}')
+    print(f'\n\t{gettext("ค่าความเบี่ยงเบนควอไทล์ คือ")} {C_BOLD}{C_BLUE}{q_d:,.3f}{C_RESET}')
 
     #!หาค่าเฉลี่ย
     n = len_numlist_x
@@ -718,14 +793,14 @@ def frequency_distribution(numlist) :
         print(f'\tFX2 {gettext("คือ")} {fx_2}')
         print(f'{C_RESET}')
 
-    print(f'\n\t{gettext("ความเบี่ยงเบนมาตรฐาน SD. คือ")} {C_BLUE}{sd_x:,.3f}{C_RESET}')
-    print(f'\n\t{gettext("ความแปรปรวน S2 คือ")} {C_BLUE}{s2_x:,.3f}{C_RESET}')
+    print(f'\n\t{gettext("ความเบี่ยงเบนมาตรฐาน SD. คือ")} {C_BOLD}{C_BLUE}{sd_x:,.3f}{C_RESET}')
+    print(f'\n\t{gettext("ความแปรปรวน S2 คือ")} {C_BOLD}{C_BLUE}{s2_x:,.3f}{C_RESET}')
     x_bar = fx_2 / n
-    print(f'\n\t{gettext("ค่าเฉลี่ย คือ")} {C_BLUE}{x_bar:,.3f}{C_RESET}')
+    print(f'\n\t{gettext("ค่าเฉลี่ย คือ")} {C_BOLD}{C_BLUE}{x_bar:,.3f}{C_RESET}')
 
     #!หาค่ามัธยฐาน
     def find_md_x() :
-        n_2 = (len_numlist_x / 2)
+        n_2 = len_numlist_x / 2
         md_pointer_row = 0
         for i in range(len_num_martrix) :
             if n_2 < float(table_martrix[i][5]) :
@@ -738,18 +813,19 @@ def frequency_distribution(numlist) :
         md_l = float(table_martrix[md_pointer_row - 1][2])
         if ISDEBUG is True :
             print(f'{C_YELLOW}')
-            print(f'\tN2 {gettext("คือ")} {n_2}')
-            print(f'\tMD pointer row {gettext("คือ")} {md_pointer_row}')
-            print(f'\tFX {gettext("คือ")} {f_x}')
-            print(f'\tFL {gettext("คือ")} {f_l}')
-            print(f'\tI {gettext("คือ")} {md_i}')
+            print(f'\tN {gettext("คือ")} {len_numlist_x}')
+            print(f'\tN/2 {gettext("คือ")} {n_2}')
+            print(f'\tPointer row {gettext("คือ")} {md_pointer_row}')
             print(f'\tL {gettext("คือ")} {md_l}')
+            print(f'\tF (f_x) {gettext("คือ")} {f_x}')
+            print(f'\tf (f_l) {gettext("คือ")} {f_l}')
+            print(f'\ti {gettext("คือ")} {md_i}')
             print(f'{C_RESET}')
 
         md_x = md_l + (md_i * (n_2 - f_l)) / f_x
         return md_x
 
-    print(f'\n\t{gettext("ค่ามัธยฐาน คือ")} {C_BLUE}{find_md_x():,.3f}{C_RESET}')
+    print(f'\n\t{gettext("ค่ามัธยฐาน คือ")} {C_BOLD}{C_BLUE}{find_md_x():,.3f}{C_RESET}')
 
     #!หาค่าฐานนิยม
     def find_mode_x() :
@@ -769,17 +845,17 @@ def frequency_distribution(numlist) :
             mo_d2 = float(table_martrix[mo_pointer_row][4]) - float(table_martrix[mo_pointer_row + 1][4])
         if ISDEBUG is True :
             print(f'{C_YELLOW}')
-            print(f'\tL {gettext("คือ")} {mo_l}')
             print(f'\tD1 {gettext("คือ")} {mo_d1}')
             print(f'\tD2 {gettext("คือ")} {mo_d2}')
-            print(f'\tI {gettext("คือ")} {i}')
+            print(f'\ti {gettext("คือ")} {i}')
+            print(f'\tL {gettext("คือ")} {mo_l}')
             print(f'{C_RESET}')
 
         if (mo_d1 + mo_d2) == 0:
-            return f'\n\t{C_GREEN}{gettext("ไม่มีค่าฐานนิยม")}{C_RESET}'
+            return f'\n\t{C_BOLD}{C_GREEN}{gettext("ไม่มีค่าฐานนิยม")}{C_RESET}'
 
         mode_x = mo_l + ((mo_d1 / (mo_d1 + mo_d2)) * i)
-        return f'\n\t{gettext("ค่าฐานนิยม คือ")} {C_BLUE}{mode_x:,.3f}{C_RESET}'
+        return f'\n\t{gettext("ค่าฐานนิยม คือ")} {C_BOLD}{C_BLUE}{mode_x:,.3f}{C_RESET}'
 
     print(f'{find_mode_x()}')
 
@@ -807,11 +883,14 @@ while IS_RUN:
                     if QUESTION == '' :
                         numlist_input(loadtemp,1) #! (loadtemp,X,Y) 1 คือ bypass input (!=0)
                     else:
-                        print(f'\n{C_RESET}{gettext("ต้องการรับข้อมูลผ่านไฟล์ txt หรือไม่")} [ Y / N ] ?')
-                        QUESTION = input(f'\t>>>{C_GREEN} ')
-                        resetcolor()
+                        while True:
+                            print(f'\n{C_RESET}{gettext("ต้องการรับข้อมูลผ่านไฟล์ txt หรือไม่")} [ Y / N ] ?')
+                            QUESTION = input(f'\t>>>{C_GREEN} ')
+                            resetcolor()
+                            if QUESTION not in [''] :
+                                break
                         if QUESTION.upper() not in ['Y']:
-                            print(f'{C_RESET}{"═"*50}\n')
+                            print(f'\n{C_RESET}{"═"*50}\n')
                             num = input(f'{C_RESET}{gettext("กรอกตัวเลข (เป็นชุด หรือ ทีละตัว) >>>")} {C_GREEN}')
                             print(f'{C_RESET}\n{"═"*50}\n')
                             numlist_input(num)
@@ -824,18 +903,39 @@ while IS_RUN:
         print(f'\n{"═"*50}')
         if len(last_numlist) > 0 :
             print(f'\n{gettext("พิมพ์")} {C_GREEN}R{C_RESET} {gettext("เพื่อใช้งานโปรแกรมอีกครั้งโดยใช้ชุดข้อมูลล่าสุด")}')
-            print(f'{C_RESET}{gettext("ชุดข้อมูลล่าสุดคือ (ขนาดชุดข้อมูล")} {C_GREEN}{len(last_numlist)}{C_RESET}) : {C_BLUE}{last_numlist}{C_RESET}')
+            print(f'{C_RESET}{gettext("ชุดข้อมูลล่าสุดคือ (ขนาดชุดข้อมูล")} {C_BOLD}{C_GREEN}{len(last_numlist)}{C_RESET}) : {C_BLUE}{last_numlist}{C_RESET}')
             print(f'\n{C_RESET}{gettext("ต้องการคำนวณอีกครั้งหรือไม่")} [ Y / N / R ] ?')
         else:
             print(f'\n{C_RESET}{gettext("ต้องการคำนวณอีกครั้งหรือไม่")} [ Y / N ] ?')
-        QUESTION = input(f'\t>>>{C_GREEN} ')
-        resetcolor()
+        while True:
+            QUESTION = input(f'\t>>>{C_GREEN} ')
+            resetcolor()
+            if QUESTION not in [''] :
+                if QUESTION.upper() in ['SERECT', 'DEV']:
+                    print('Hi Dev!\nTry using the python command. Here are some variables.\n (> CONFIGLANG ISDEBUG DELAY <) Have fun!')
+                    while True:
+                        print(C_MAGENTA)
+                        print('\t$ ',end='')
+                        dev_cm = input()
+                        try:
+                            # pylint: disable-next=exec-used
+                            exec(dev_cm)
+                        except: # pylint: disable=W0702
+                            print('Code Error ! ')
+                            resetcolor()
+                        if input('\nExit ? [Y / N] >> ').upper() in ['Y']:
+                            resetcolor()
+                            break
+                    QUESTION = 'Y'
+                break
         if QUESTION.upper() in ['R'] and len(last_numlist) > 0 :
             LOAD_LAST = True
             output_table.clear()
         elif QUESTION.upper() not in ['Y']:
             print(f'\n{C_RESET}{"═"*50}\n')
             print(f'{gettext("จบการทำงาน")}')
+            print(f'\n{gettext("จัดทำโดย")}')
+            print(f'\t{C_MAGENTA}049 {C_GREEN}Champ {C_MAGENTA}\n\t018 {C_GREEN}Tong {C_MAGENTA}\n\t019 {C_GREEN}Dong{C_RESET}\n\n\t{C_BOLD}{C_YELLOW}CS65{C_RESET}') #!ชื่อเต็มในตัวส่ง
             print(f'\n{"═"*50}\n')
             IS_RUN = False
         else:
@@ -843,3 +943,4 @@ while IS_RUN:
             LOAD_LAST = False
             output_table.clear()
             print('\n')
+input()
