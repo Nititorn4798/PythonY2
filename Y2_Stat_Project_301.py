@@ -1,4 +1,4 @@
-"""โปรแกรมคำนวณค่าสถิติ"""
+"""โปรแกรมคำนวณค่าสถิติ""" 
 import math
 import time
 import os
@@ -14,7 +14,7 @@ except ImportError:
     print("\u001b[0m ✖ You can install 'Prettytable' using the command \u001b[31m'\u001b[32mpython -m pip install -U prettytable\u001b[31m'","\u001b[0m")
     raise
 from prettytable import PrettyTable
-
+# pylint: disable=C0302
 C_BLACK = '\u001b[30m'
 C_RED = '\u001b[91m'
 C_GREEN = '\u001b[92m'
@@ -27,7 +27,7 @@ C_RESET = '\u001b[0m'
 C_BOLD = '\u001b[1m'
 C_UNDERLINE = '\u001b[4m'
 
-try:
+try: #!ส่วนการแก้ไขการแสดงผลสี โดยการแก้ไข ค่าใน register ให้ cmd รองรับ ansi color
     import ctypes
     if ctypes.windll.shell32.IsUserAnAdmin():
         CMD_CM = "reg add HKEY_CURRENT_USER\Console /v VirtualTerminalLevel /t REG_DWORD /d 1" # pylint: disable=W1401 # pyright: ignore[reportInvalidStringEscapeSequence]
@@ -52,7 +52,7 @@ DELAY = 0
 def clearscreen():
     """ฟังก์ชั่น ล้างหน้าจอ terminal"""
     if DELAY > 0 :
-        emoji = ['Made With ❤️ By CS65','🔥','😊','💀','👍','เกรด A สถิติ 🙏','✔️','🤔','🎃','😳','🥰']
+        emoji = ['Made With ❤️  By CS65','🔥','😊','💀','👍','เกรด A สถิติ 🙏','✔️','🤔','🎃','😳','🥰','ความจริงมีเพียงหนึ่งเดียวเท่านั้น 🧐','พ่อสอนให้ที่ฮาวาย 😉','🤨']
         for i in range(1,DELAY+1):
             block_print = ((i / (DELAY)) * 100)
             for _ in range(int(block_print)) :
@@ -83,6 +83,7 @@ textset = {"en": {
     "! ไม่สามารถเรียกการตั้งค่าการหน่วงเวลาได้": "! Unable to retrieve delay setting.",
     "ตั้งค่าหน่วงเวลาเป็น": "Set Delay to",
     "วินาที": "seconds.",
+    "! พบข้อผิดพลาดในค่าที่ตั้งค่า จะเปลี่ยนตั้งค่าเป็นค่าตั้งต้น 0 0 เพื่อปิดการใช้งาน การเลือกโหมดตั้งต้น": "! An error was found in the setting value. Change the setting to the default '0 0' to disabled. 'Selecting default mode'",
     "โหลดข้อมูลจาก": "Loading data from",
     "เสร็จสิ้น": "has been completed.",
     "ไม่พบข้อมูลในไฟล์ txt": "Data not found in the txt file.",
@@ -100,7 +101,7 @@ textset = {"en": {
     "เลือกโหมดการคำนวณที่ต้องการ": "Select the desired calculation mode",
     "ไม่แจกแจง": "Not distributed",
     "แจกแจง": "Distributed",
-    "พบข้อผิดพลาด กรุณาเช็คตัวเลขที่ท่านกรอกมา": "Error encountered. Please check the entered numbers.",
+    "พบข้อผิดพลาด กรุณาตรวจสอบตัวเลขที่ท่านกรอกมา": "Error encountered. Please check the entered numbers.",
     "เลือกโหมดการคำนวณแบบไม่แจกแจง ที่ต้องการ": "Select the desired non-distributed calculation mode",
     "ค่าสูงสุด Max": "Maximum value",
     "ค่าต่่ำสุด Min": "Minimum value",
@@ -111,7 +112,7 @@ textset = {"en": {
     "ความเบี่ยงเบนมาตรฐาน Standard Deviation": "Standard deviation",
     "ความแปรปรวน S2, Variance": "Variance",
     "ค่าพิสัยของคะแนน Range": "Range of scores",
-    "ทุกการคำนวณ": "All calculations",
+    "เรียกใช้ทุกการคำนวณ": "All calculations",
     "เกิดข้อผิดพลาดขณะโหลดไฟล์ (ValueError) กรุณาตรวจสอบค่า ในข้อมูลที่บรรทัด": "An error occurred while loading the file (ValueError). Please check the value in the line of data",
     "ว่าตัวสุดท้ายมีการเว้นไว้หรือไม่": "Whether the last value is omitted or not",
     "เกิดข้อผิดพลาดขณะโหลดไฟล์ (IndentationError) กรุณาตรวจสอบการเว้นวรรค ในข้อมูลที่บรรทัด": "An error occurred while loading the file (IndentationError). Please check the indentation in the line of data",
@@ -167,11 +168,32 @@ def gettext(textcode, bypass = False):
     return textcode
 
 #!ฟังก์ชั่นโหลดการตั้งค่าภาษา และ สร้างไฟล์ txt ถ้าไม่พบ
+DEFMODE = 0 #? ค่าตั้งต้น โหมดการทำงาน
+DEFCALMODE = 0 #? ค่าตั้งต้น โหมดการคำนวณ (โหมดการทำงาน 1 ไม่แจกแจง 2 แจกแจง)
+DEFNUMCLASS = 0 #? ค่าตั้งต้น จำนวนชั้น
 CONFIGFILE = "settings_stat.txt"
 while True:
+    def createconfig(mode_file = 'x') :
+        """ฟังก์ชั่นสร้างไฟล์การตั้งค่า หรือ รีเซ็ทการตั้งค่าหากไฟล์การตั้งค่าไม่ถูกต้อง"""
+        with open(f'{MYPATH}/{CONFIGFILE}', f'{mode_file}', encoding="utf-8") as createconfig_x:
+            print(f'{C_BLUE}{CONFIGFILE} {C_GREEN}{gettext("หาไม่เจอ", True)} {C_BLUE}{CONFIGFILE} {C_GREEN}{gettext("ไฟล์ถูกสร้างสำเร็จแล้ว", True)}{C_RESET}\n')
+            createconfig_x.writelines('#  นี่คือไฟล์การตั้งค่า สามารถตั้งภาษาได้โดยการเปลี่ยนค่า = en หรือ = th | เปลี่ยน DEBUG = True เพื่อแสดงค่าระหว่างที่คำนวณ | Delay = (วิ) เพื่อตั้งหน่วงเวลาล้างหน้าจอในหน่วยวินาที | Default Mode = (1-2) (1-9,999 [เมื่อใช้โหมด 1 จะเป็นเลือกการคำนวณ, ในโหมด 2 จะเป็นจำนวนชั้น] ) เพื่อเลือกการทำงานโดยที่ไม่ต้องเลือกในโปรแกรม #\n')
+            createconfig_x.writelines('languages [en,th] = please-setup\n')
+            createconfig_x.writelines('DEBUG = False\n')
+            createconfig_x.writelines('Delay [sec] = 1\n')
+            createconfig_x.writelines('Default Mode = 0 0\n')
+            createconfig_x.close()
     try:
         configs = open(f'{MYPATH}/{CONFIGFILE}', 'r+', encoding="utf-8")
-        for line ,content in enumerate(configs) :
+        textconfig = configs.read()
+        textconfig = textconfig.split("\n")
+        if len(textconfig) < 6: #! รีเซ็ทการตั้งค่าหากบรรทัดไม่ครบ
+            configs.close()
+            createconfig('w')
+            configs = open(f'{MYPATH}/{CONFIGFILE}', 'r+', encoding="utf-8")
+        else:
+            configs = open(f'{MYPATH}/{CONFIGFILE}', 'r+', encoding="utf-8")
+        for line, content in enumerate(configs) :
             if line == 1 :
                 tempconfig = content.replace('\n', '').replace(' = ', ' = ').split(" = ")
                 CONFIGLANG = tempconfig[-1]
@@ -204,19 +226,58 @@ while True:
                 else:
                     print(f'{C_RED}{gettext("! ไม่สามารถเรียกการตั้งค่าการหน่วงเวลาได้")}{C_YELLOW} {gettext("ตั้งค่าหน่วงเวลาเป็น")} 3 {gettext("วินาที")}')
                     DELAY = 3
+            if line == 4 :
+                tempconfig = content.replace('\n', '').replace(' = ', ' = ').split(" = ")
+                tempconfig = tempconfig[-1].split(" ")
+                def configeditor(defmode_x = '0'):
+                    """ฟังก์ชั่นแก้ไขไฟล์ตั้งค่าเมื่อไฟล์ตั้งค่าไม่ถูกต้อง"""
+                    print(f"{C_RED}{gettext('! พบข้อผิดพลาดในค่าที่ตั้งค่า จะเปลี่ยนตั้งค่าเป็นค่าตั้งต้น 0 0 เพื่อปิดการใช้งาน การเลือกโหมดตั้งต้น')}{C_RESET}")
+                    configsave_x = open(f'{MYPATH}/{CONFIGFILE}', 'r', encoding="utf-8")
+                    configtemp_x = configsave_x.read()
+                    configsave_x.close()
+                    tempconfigtxt_x = configtemp_x.split('\n')
+                    tempconfigtxt_x[4] = f'Default Mode = {defmode_x} 0'
+                    configsave_x = open(f'{MYPATH}/{CONFIGFILE}', 'w', encoding="utf-8")
+                    for i_config_x in tempconfigtxt_x :
+                        if i_config_x not in ['','\n'] :
+                            configsave_x.writelines(f'{i_config_x}\n')
+                    configsave_x.close()
+                match len(tempconfig):
+                    case 1 :
+                        if tempconfig[0].isnumeric() is True :
+                            if tempconfig[0] in ['0','1','2'] :
+                                DEFMODE = int(tempconfig[0])
+                        else:
+                            configeditor()
+                    case 2 :
+                        if tempconfig[0].isnumeric() is True and tempconfig[1].isnumeric() is True:
+                            if tempconfig[0] in ['0','1','2'] :
+                                DEFMODE = int(tempconfig[0])
+                                if DEFMODE == 1:
+                                    if tempconfig[1] in ['0','1','2','3','4','5','6','7','8','9','999']:
+                                        DEFCALMODE = int(tempconfig[1])
+                                    else:
+                                        configeditor('1')
+                                if DEFMODE == 2:
+                                    if 3 <= int(tempconfig[1]) <= 15:
+                                        DEFNUMCLASS = int(tempconfig[1])
+                            else:
+                                configeditor()
+                        else:
+                            configeditor()
+                    case _ :
+                        configeditor()
+                if ISDEBUG :
+                    print(f'{C_YELLOW}\nDEFMODE : {DEFMODE} \nDEFCALMODE : {DEFCALMODE}{C_RESET}')
+                    if DEFMODE == 2:
+                        print(f'{C_YELLOW}DEFNUMCLASS : {DEFNUMCLASS}')
                 configs.close()
                 break
         print(f'\n{gettext("การตั้งค่าภาษาปัจจุบันคือ")} {C_BOLD}{C_YELLOW}{CONFIGLANG}{C_RESET}\n')
         break
 
     except FileNotFoundError:
-        with open(f'{MYPATH}/{CONFIGFILE}', 'x', encoding="utf-8") as createconfig:
-            print(f'{C_BLUE}{CONFIGFILE} {C_GREEN}{gettext("หาไม่เจอ", True)} {C_BLUE}{CONFIGFILE} {C_GREEN}{gettext("ไฟล์ถูกสร้างสำเร็จแล้ว", True)}{C_RESET}\n')
-            createconfig.writelines('#  นี่คือไฟล์ตั้งค่าภาษา สามารถตั้งภาษาได้โดยการเปลี่ยนค่า = en หรือ = th | เปลี่ยน DEBUG = True เพื่อแสดงค่าระหว่างที่คำนวณ | Delay = (วิ) เพื่อตั้งหน่วงเวลาล้างหน้าจอในหน่วยวินาที #\n')
-            createconfig.writelines('languages [en,th] = please-setup\n')
-            createconfig.writelines('DEBUG = False\n')
-            createconfig.writelines('Delay [sec] = 1\n')
-            createconfig.close()
+        createconfig()
 
 
 output_table = PrettyTable()
@@ -225,7 +286,7 @@ output_table.set_style(SINGLE_BORDER)
 
 last_numlist = []
 QUESTION = ''
-def numlist_input(inputset,bypassinput = 0,menu = 0):
+def numlist_input(inputset, bypassinput = 0, defmode = 0, defcalmode = 0): #! bypassinput คือ การข้ามการรับข้อมูลด้วยการกรอก ถ้าหากรับผ่านไฟล์ text
     """ฟังก์ชั่น รับชุดตัวเลข ที่มีการทำงานสองแบบ
     1. รับตัวเลข 1 ตัวก่อน
     2. รับตัวเลขมาทั้งชุด
@@ -253,13 +314,13 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
                                 break
                         if 0 < inputset < 1000 :
                             numlist.append(inputset)
-                        else:
-                            print(f'\n{C_RESET}{"═"*50}\n')
+                        elif len(numlist) > 0:
+                            print(f'\n{C_RESET}{"═"*100}\n')
                             print(f'{C_GREEN}✔ {gettext("เสร็จสิ้นการกรอกข้อมูล")}{C_RESET}')
                             print(f'{C_RESET}✔ {gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_BOLD}{C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}\n')
                             break
                     else:
-                        print(f'\n{"═"*50}\n')
+                        print(f'\n{"═"*100}\n')
                         print(f'{C_GREEN}✔ {gettext("เสร็จสิ้นการกรอกข้อมูล")}{C_RESET}')
                         print(f'{C_RESET}✔ {gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_BOLD}{C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}\n')
                         break
@@ -276,37 +337,37 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
         else:
             numlist = inputset
             if QUESTION.upper() not in ['R'] :
-                print(f'\n{"═"*50}\n')
+                print(f'\n{"═"*100}\n')
                 print(f'{C_GREEN}✔ {gettext("รับค่าผ่านไฟล์ text สำเร็จ")}{C_RESET}')
             else:
-                print(f'\n{"═"*50}\n')
+                print(f'\n{"═"*100}\n')
                 print(f'\n{gettext("ใช้ชุดข้อมูลเก่า สำเร็จ")}')
             print(f'{C_RESET}{gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_BOLD}{C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}\n')
 
-        print(f'{"═"*50}\n')
+        print(f'{"═"*100}\n')
         temp_last_numlist.extend(numlist)
-        if menu == 0:
+        if defmode == 0:
             while True:
                 print(f'{gettext("เลือกโหมดการคำนวณที่ต้องการ")}')
                 print(f'\t1. {gettext("ไม่แจกแจง")}')
                 print(f'\t2. {gettext("แจกแจง")}')
-                print(f'\n{"═"*50}\n')
+                print(f'\n{"═"*100}\n')
                 print(f'\t>>>{C_GREEN} ',end='')
-                menu = input()
-                if menu == '' or menu.isnumeric() is False  :
+                defmode = input()
+                if defmode == '' or defmode.isnumeric() is False  :
                     print(f'\n{C_RED}✖ {gettext("กรุณากรอกตัวเลขเท่านั้น")}{C_RESET}\n')
                 else:
-                    menu = int(menu)
+                    defmode = int(defmode)
                     break
-            print(f'\n{C_RESET}{"═"*50}')
+            print(f'\n{C_RESET}{"═"*100}')
 
     except ValueError:
-        print(f'{C_RED}✖ {gettext("พบข้อผิดพลาด กรุณาเช็คตัวเลขที่ท่านกรอกมา")}{C_RESET}')
+        print(f'{C_RED}✖ {gettext("พบข้อผิดพลาด กรุณาตรวจสอบตัวเลขที่ท่านกรอกมา")}{C_RESET}')
         is_error = True
 
     finally:
         if is_error is False:
-            match menu:
+            match defmode:
                 case 1:
                     while True:
                         print(f'\n{gettext("เลือกโหมดการคำนวณแบบไม่แจกแจง ที่ต้องการ")}')
@@ -319,16 +380,21 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
                         print(f'\t7. {gettext("ความเบี่ยงเบนมาตรฐาน Standard Deviation")}')
                         print(f'\t8. {gettext("ความแปรปรวน S2, Variance")}')
                         print(f'\t9. {gettext("ค่าพิสัยของคะแนน Range")}')
-                        print(f'\t999. {gettext("ทุกการคำนวณ")}')
-                        print(f'\n{"═"*50}\n')
+                        print(f'\t999. {gettext("เรียกใช้ทุกการคำนวณ")}')
+                        print(f'\n{"═"*100}\n')
                         print(f'\t>>>{C_GREEN} ',end='')
-                        menu_x = input()
-                        if menu_x == '' or menu_x.isnumeric() is False  :
-                            print(f'\n{C_RED}✖ {gettext("กรุณากรอกตัวเลขเท่านั้น")}{C_RESET}')
+                        if defcalmode == 0:
+                            menu_x = input()
+                            if menu_x == '' or menu_x.isnumeric() is False  :
+                                print(f'\n{C_RED}✖ {gettext("กรุณากรอกตัวเลขเท่านั้น")}{C_RESET}')
+                            else:
+                                menu_x = int(menu_x)
+                                break
                         else:
-                            menu_x = int(menu_x)
+                            print(f'{defcalmode} {C_YELLOW}(Default Mode)')
+                            menu_x = defcalmode
                             break
-                    print(f'\n{C_RESET}{"═"*50}')
+                    print(f'\n{C_RESET}{"═"*100}')
                     match menu_x:
                         case 1 :
                             find_max(numlist)
@@ -360,11 +426,11 @@ def numlist_input(inputset,bypassinput = 0,menu = 0):
                             find_range(numlist)
                             print(f'\n{output_table}')
                         case _ :
-                            print(f'\n{C_RED}✖ {gettext("พบข้อผิดพลาด กรุณาเช็คตัวเลขที่ท่านกรอกมา")}{C_RESET}')
+                            print(f'\n{C_RED}✖ {gettext("พบข้อผิดพลาด กรุณาตรวจสอบตัวเลขที่ท่านกรอกมา")}{C_RESET}')
                 case 2:
-                    frequency_distribution(numlist)
+                    frequency_distribution(numlist,DEFNUMCLASS)
                 case _ :
-                    print(f'\n{C_RED}✖ {gettext("พบข้อผิดพลาด กรุณาเช็คตัวเลขที่ท่านกรอกมา")}{C_RESET}')
+                    print(f'\n{C_RED}✖ {gettext("พบข้อผิดพลาด กรุณาตรวจสอบตัวเลขที่ท่านกรอกมา")}{C_RESET}')
         last_numlist.clear()
         last_numlist.extend(temp_last_numlist)
 
@@ -565,8 +631,7 @@ def find_range(numlist):
 def find_mode(numlist):
     """ค่าฐานนิยม ( Mode ) คือ ค่าของข้อมูลตัวที่เกิดขึ้นบ่อยที่สุด หรือตัวที่มีความถี่มากที่สุด 
     โดยปกติข้อมูล 1 ชุดจะมีฐานนิยมค่าเดียว แต่เป็นไปได้ที่ข้อมูลบางชุดอาจมีฐานนิยมมากกว่า 1 ค่า"""
-    num_counter = {
-    }
+    num_counter = {}
     num_members = []
     mode = ''
     for num_i in numlist:
@@ -575,8 +640,8 @@ def find_mode(numlist):
         else:#ถ้าเลขยังไม่อยู่ในdictให้เซตเป็น1ไว้
             num_counter[num_i] = 1
 
-    for (member,maxx) in num_counter.items() :#samachick,maxคือการเปลี่ยเทียบกับ.item()ที่มีค่าออกมาเป็นเซตๆ หรือ(samachick,max)=(x,y) เมื่อxและyเป็นค่าในnaplek.items()
-        if maxx == max(num_counter.values()):#หาค่าที่ซ้ำมากที่สุดของvalueทั้งหมดของdict และเทียบกับmaxxทุกๆตัว เพื่อหาsamachick
+    for (member,maxx) in num_counter.items() :#member,maxคือการเปลี่ยเทียบกับ.item()ที่มีค่าออกมาเป็นเซตๆ หรือ(member,max)=(x,y) เมื่อxและyเป็นค่าในnum_counter.items()
+        if maxx == max(num_counter.values()):#หาค่าที่ซ้ำมากที่สุดของvalueทั้งหมดของdict และเทียบกับmaxxทุกๆตัว เพื่อหา member
             num_members.append(member)#เพื่อเพิ่มไว้ดูว่ามีฐานนิยมที่เป็นสมาชิกกี่ตัว และตัวไหนบ้างที่เป็น
     len_num_members = len(num_members)
     ishave_mode = True
@@ -597,17 +662,15 @@ def find_mode(numlist):
         print(f'\n{C_BOLD}{C_GREEN}{gettext("ไม่มีค่าฐานนิยม")}{C_RESET}')
         output_table.add_column('Mode',[gettext("ไม่มีค่าฐานนิยม")])
 
-def frequency_distribution(numlist) :
+def frequency_distribution(numlist,numclass = 0) :
     """ฟังก์ชั่นหา การแจกแจงความถี่ (Frequency Distribution)
     การแจกแจงความถี่เป็นการนำข้อมูลที่เป็นค่าของตัวแปรที่เราสนใจมาจัดเรียงตามลำดับความมากน้อย 
     และแบ่งเป็นช่วงเท่าๆกัน จำนวนข้อมูลในแต่ละช่วงคะแนน เรียกว่า ความถี่"""
     num_min = numlist[0]
     num_max = 0
     f_mom_last = 0
-    f_num={
-    }
-    low_upper_class = {
-    }#ขีดจำกัดล่างและบนในรูปแบบของdict
+    f_num={}
+    low_upper_class = {}#ขีดจำกัดล่างและบนในรูปแบบของdict
     frequency_distribution_num_table = PrettyTable()
     frequency_distribution_num_table.align = "r"
     frequency_distribution_num_table.set_style(SINGLE_BORDER)
@@ -630,12 +693,19 @@ def frequency_distribution(numlist) :
     while True :
         print(f'{gettext("สามารถใช้ข้อมูลจำนวนชั้นได้มากสุด :")} {C_BOLD}{C_RED}{math.floor(max_class)}{C_RESET}')
         while True :
-            num_class_interval = input(f'\t{gettext("กรอกจำนวนชั้นที่ต้องการ >>>")}{C_GREEN} ')
-            if num_class_interval == '' or num_class_interval.isnumeric() is False  :
-                print(f'{C_RED}\n✖ {gettext("อันตรภาคชั้นต้องอยู่ระหว่าง 3-15 ชั้น กรุณากรอกชั้นใหม่อีกครั้ง")}\n{C_RESET}')
+            if numclass == 0 :
+                num_class_interval = input(f'\t{gettext("กรอกจำนวนชั้นที่ต้องการ >>>")}{C_GREEN} ')
+                if num_class_interval == '' or num_class_interval.isnumeric() is False  :
+                    print(f'{C_RED}\n✖ {gettext("อันตรภาคชั้นต้องอยู่ระหว่าง 3-15 ชั้น กรุณากรอกชั้นใหม่อีกครั้ง")}\n{C_RESET}')
+                else:
+                    num_class_interval = int(num_class_interval)
+                    break
             else:
-                num_class_interval = int(num_class_interval)
-                break
+                if 3 <= numclass <= 15:
+                    num_class_interval = numclass
+                    print(f'\t{gettext("กรอกจำนวนชั้นที่ต้องการ >>>")}{C_GREEN} {numclass} {C_YELLOW}(Default Mode)')
+                    numclass = 0 #! ใช้ค่าตั้งต้นแค่รอบเดียว
+                    break
         num_class_interval = int(num_class_interval)
         resetcolor()
         if num_class_interval > (num_max - (num_min) + 1) / 2 :
@@ -728,7 +798,7 @@ def frequency_distribution(numlist) :
         frequency_distribution_num_table.add_row([table_martrix[i][0], table_martrix[i][1], table_martrix[i][2],
                             table_martrix[i][3], table_martrix[i][4], table_martrix[i][5],
                             table_martrix[i][6], table_martrix[i][7], table_martrix[i][8]])
-    print(f'\n{"═"*50}\n')
+    print(f'\n{"═"*100}\n')
     print(f'\n\t{C_UNDERLINE}{C_CYAN}{gettext("ตารางแจกแจงความถี่")}{C_RESET}')
     print(f'\n{frequency_distribution_num_table}')
     sum_percent = 0
@@ -869,19 +939,19 @@ while IS_RUN:
             loadtemp = loaddatatxt() #!เพื่อ Load เพียงครั้งเดียว
             match loadtemp :
                 case 'empty':
-                    print(f'{C_RESET}{"═"*50}\n')
+                    print(f'{C_RESET}{"═"*100}\n')
                     num = input(f'{C_RESET}{gettext("กรอกตัวเลข (เป็นชุด หรือ ทีละตัว) >>>")} {C_GREEN}')
-                    print(f'{C_RESET}\n{"═"*50}\n')
-                    numlist_input(num)
+                    print(f'{C_RESET}\n{"═"*100}\n')
+                    numlist_input(num, defmode = DEFMODE, defcalmode = DEFCALMODE)
                 case 'error':
                     print(f'{gettext("การโหลดข้อมูลจากไฟล์ txt ผิดพลาด ใช้งานการกรอกข้อมูลด้วยตนเอง")}\n')
-                    print(f'{C_RESET}{"═"*50}\n')
+                    print(f'{C_RESET}{"═"*100}\n')
                     num = input(f'{C_RESET}{gettext("กรอกตัวเลข (เป็นชุด หรือ ทีละตัว) >>>")} {C_GREEN}')
-                    print(f'{C_RESET}\n{"═"*50}\n')
-                    numlist_input(num)
+                    print(f'{C_RESET}\n{"═"*100}\n')
+                    numlist_input(num, defmode = DEFMODE, defcalmode = DEFCALMODE)
                 case _ :
                     if QUESTION == '' :
-                        numlist_input(loadtemp,1) #! (loadtemp,X,Y) 1 คือ bypass input (!=0)
+                        numlist_input(loadtemp, 1, DEFMODE, DEFCALMODE) #! (loadtemp,X,Y) 1 คือ bypass input (!=0) DEFMODE คือค่าโหมดตั้งต้น DEFCALMODE คือค่าโหมดตั้งต้นไม่แจกแจง
                     else:
                         while True:
                             print(f'\n{C_RESET}{gettext("ต้องการรับข้อมูลผ่านไฟล์ txt หรือไม่")} [ Y / N ] ?')
@@ -890,17 +960,17 @@ while IS_RUN:
                             if QUESTION not in [''] :
                                 break
                         if QUESTION.upper() not in ['Y']:
-                            print(f'\n{C_RESET}{"═"*50}\n')
+                            print(f'\n{C_RESET}{"═"*100}\n')
                             num = input(f'{C_RESET}{gettext("กรอกตัวเลข (เป็นชุด หรือ ทีละตัว) >>>")} {C_GREEN}')
-                            print(f'{C_RESET}\n{"═"*50}\n')
+                            print(f'{C_RESET}\n{"═"*100}\n')
                             numlist_input(num)
                         else:
-                            numlist_input(loadtemp,1)
+                            numlist_input(loadtemp, 1)
         else:
-            numlist_input(last_numlist,1)
+            numlist_input(last_numlist, 1)
 
     finally:
-        print(f'\n{"═"*50}')
+        print(f'\n{"═"*100}')
         if len(last_numlist) > 0 :
             print(f'\n{gettext("พิมพ์")} {C_GREEN}R{C_RESET} {gettext("เพื่อใช้งานโปรแกรมอีกครั้งโดยใช้ชุดข้อมูลล่าสุด")}')
             print(f'{C_RESET}{gettext("ชุดข้อมูลล่าสุดคือ (ขนาดชุดข้อมูล")} {C_BOLD}{C_GREEN}{len(last_numlist)}{C_RESET}) : {C_BLUE}{last_numlist}{C_RESET}')
@@ -912,7 +982,7 @@ while IS_RUN:
             resetcolor()
             if QUESTION not in [''] :
                 if QUESTION.upper() in ['SERECT', 'DEV']:
-                    print('Hi Dev!\nTry using the python command. Here are some variables.\n (> CONFIGLANG ISDEBUG DELAY <) Have fun!')
+                    print(f'\nHi Dev!\nTry using python command. Here are some variables.\n[ {C_BLUE}CONFIGLANG ISDEBUG DELAY DEFMODE DEFCALMODE DEFNUMCLASS{C_RESET} ] Have fun!')
                     while True:
                         print(C_MAGENTA)
                         print('\t$ ',end='')
@@ -931,16 +1001,18 @@ while IS_RUN:
         if QUESTION.upper() in ['R'] and len(last_numlist) > 0 :
             LOAD_LAST = True
             output_table.clear()
+            DEFNUMCLASS = 0 #!เพื่อล้างค่าตั้งต้นที่รับมา
         elif QUESTION.upper() not in ['Y']:
-            print(f'\n{C_RESET}{"═"*50}\n')
+            print(f'\n{C_RESET}{"═"*100}\n')
             print(f'{gettext("จบการทำงาน")}')
             print(f'\n{gettext("จัดทำโดย")}')
             print(f'\t{C_MAGENTA}049 {C_GREEN}Champ {C_MAGENTA}\n\t018 {C_GREEN}Tong {C_MAGENTA}\n\t019 {C_GREEN}Dong{C_RESET}\n\n\t{C_BOLD}{C_YELLOW}CS65{C_RESET}') #!ชื่อเต็มในตัวส่ง
-            print(f'\n{"═"*50}\n')
+            print(f'\n{"═"*100}\n')
             IS_RUN = False
         else:
             last_numlist.clear()
             LOAD_LAST = False
             output_table.clear()
+            DEFNUMCLASS = 0 #!เพื่อล้างค่าตั้งต้นที่รับมา
             print('\n')
 input()
