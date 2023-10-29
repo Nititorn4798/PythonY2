@@ -99,8 +99,8 @@ textset = {"en": {
     "รับค่าผ่านไฟล์ text สำเร็จ": "Successfully received values via text file",
     "ใช้ชุดข้อมูลเก่า สำเร็จ": "Used the latest data set successfully",
     "เลือกโหมดการคำนวณที่ต้องการ": "Select the desired calculation mode",
-    "ไม่แจกแจง": "Not distributed",
-    "แจกแจง": "Distributed",
+    "ไม่แจกแจงความถี่": "Not Frequency Distribution",
+    "แจกแจงความถี่": "Frequency Distribution",
     "พบข้อผิดพลาด กรุณาตรวจสอบตัวเลขที่ท่านกรอกมา": "Error encountered. Please check the entered numbers.",
     "เลือกโหมดการคำนวณแบบไม่แจกแจง ที่ต้องการ": "Select the desired non-distributed calculation mode",
     "ค่าสูงสุด Max": "Maximum value",
@@ -349,8 +349,8 @@ def numlist_input(inputset, bypassinput = 0, defmode = 0, defcalmode = 0): #! by
         if defmode == 0:
             while True:
                 print(f'{gettext("เลือกโหมดการคำนวณที่ต้องการ")}')
-                print(f'\t1. {gettext("ไม่แจกแจง")}')
-                print(f'\t2. {gettext("แจกแจง")}')
+                print(f'\t1. {gettext("ไม่แจกแจงความถี่")}')
+                print(f'\t2. {gettext("แจกแจงความถี่")}')
                 print(f'\n{"═"*100}\n')
                 print(f'\t>>>{C_GREEN} ',end='')
                 defmode = input()
