@@ -83,11 +83,11 @@ textset = {"en": {
     "! ไม่สามารถเรียกการตั้งค่าการหน่วงเวลาได้": "! Unable to retrieve delay setting.",
     "ตั้งค่าหน่วงเวลาเป็น": "Set Delay to",
     "วินาที": "seconds.",
-    "! พบข้อผิดพลาดในค่าที่ตั้งค่า จะเปลี่ยนตั้งค่าเป็นค่าตั้งต้น 0 0 เพื่อปิดการใช้งาน การเลือกโหมดตั้งต้น": "! An error was found in the setting value. Change the setting to the default '0 0' to disabled. 'Selecting default mode'",
+    "! พบข้อผิดพลาดในค่าที่ตั้งค่า จะเปลี่ยนตั้งค่าเป็นค่าตั้งต้น 0 0 เพื่อปิดการใช้งาน การเลือกโหมดตั้งต้น": "! An error was found in the setting value. Change the setting to the default '0 0' to disabled. 'Default mode'",
     "โหลดข้อมูลจาก": "Loading data from",
     "เสร็จสิ้น": "has been completed.",
     "ไม่พบข้อมูลในไฟล์ txt": "Data not found in the txt file.",
-    "พิมพ์": "type",
+    "พิมพ์": "Type",
     "เพื่อจบการกรอกเลข": "To complete number entry",
     "กรอกตัวเลขเพิ่มเติม (1-999) ตัวที่ :": "Enter additional numbers (1-999) at number :",
     "กรุณากรอกตัวเลขเท่านั้น": "Please enter numbers only.",
@@ -279,7 +279,6 @@ while True:
     except FileNotFoundError:
         createconfig()
 
-
 output_table = PrettyTable()
 output_table.align = "r"
 output_table.set_style(SINGLE_BORDER)
@@ -341,7 +340,7 @@ def numlist_input(inputset, bypassinput = 0, defmode = 0, defcalmode = 0): #! by
                 print(f'{C_GREEN}✔ {gettext("รับค่าผ่านไฟล์ text สำเร็จ")}{C_RESET}')
             else:
                 print(f'\n{"═"*100}\n')
-                print(f'\n{gettext("ใช้ชุดข้อมูลเก่า สำเร็จ")}')
+                print(f'{gettext("ใช้ชุดข้อมูลเก่า สำเร็จ")}')
             print(f'{C_RESET}{gettext("ชุดข้อมูลคือ (ขนาดชุดข้อมูล")} {C_BOLD}{C_GREEN}{len(numlist)}{C_RESET}) : {C_BLUE}{numlist}{C_RESET}\n')
 
         print(f'{"═"*100}\n')
@@ -526,7 +525,7 @@ def find_median(numlist):
     output_table.add_column('Median',[f'{total:,.2f}'])
 
 def find_mean(numlist):
-    """ค่าเฉลี่ย (Average, Mean) หมายถึง 
+    """ค่าเฉลี่ย x̄ (Average, Mean) หมายถึง 
     ค่าเฉลี่ยซึ่งเกิดจากข้อมูลของผลรวมทั้งหมดหารด้วยจำนวนรายการของข้อมูล"""
     numlistlen = len(numlist) #นับสมาชิกเก็บไว้ในค่าn
     mean = 0
@@ -544,7 +543,7 @@ def find_md(numlist):
     lennumlist = len(numlist)
     list_num = []
     numtemp = 0
-    sum_num = 0
+    sum_numlist = 0
     for i in numlist : #ใช้Sum ค่าใน numlist
         numtemp = numtemp + i#บวกค่าในลิตส์
     x_bar = numtemp / lennumlist#หาค่าเฉลี่ยโดยการหาร
@@ -556,9 +555,9 @@ def find_md(numlist):
         list_num.append(tempnum)#Addเข้าlist_num
 
     for k in list_num :#ใช้Sum ค่าในlist_num
-        sum_num = sum_num + k#บวกค่าในลิตส์
-    sum_num = sum_num / lennumlist#หาค่าM.D.
-    md_value = round(sum_num,2)
+        sum_numlist = sum_numlist + k#บวกค่าในลิตส์
+    sum_numlist = sum_numlist / lennumlist#หาค่าM.D.
+    md_value = round(sum_numlist,2)
     print(f'\n{gettext("ความเบี่ยงเบนเฉลี่ย คือ")} {C_BOLD}{C_GREEN}{md_value:,.2f}{C_RESET}')
     output_table.add_column('M.D.',[f'{md_value:,.2f}'])
 
@@ -568,7 +567,7 @@ def find_sd(numlist):
     lennumlist = len(numlist)
     list_num = []
     numtemp = 0
-    sum_num = 0
+    sum_numlist = 0
     for i in numlist : #ใช้Sum ค่าใน numlist
         numtemp = numtemp + i#บวกค่าในลิตส์
     x_bar = numtemp / lennumlist#หาค่าเฉลี่ยโดยการหาร
@@ -579,9 +578,9 @@ def find_sd(numlist):
         list_num.append(tempnum)#Addเข้าlist_num
 
     for k in list_num :#ใช้Sum ค่าในlist_num
-        sum_num = sum_num + k#บวกค่าในลิตส์
-    sum_num = math.sqrt(sum_num / lennumlist)
-    sd_value = round(sum_num,2)
+        sum_numlist = sum_numlist + k#บวกค่าในลิตส์
+    sum_numlist = math.sqrt(sum_numlist / lennumlist)
+    sd_value = round(sum_numlist,2)
     print(f'\n{gettext("ความเบี่ยงเบนมาตรฐาน คือ")} {C_BOLD}{C_GREEN}{sd_value:,.2f}{C_RESET}')
     output_table.add_column('S.D.',[f'{sd_value:,.2f}'])
 
@@ -591,20 +590,20 @@ def find_s_2(numlist):
     lennumlist = len(numlist)
     list_num = []
     numtemp = 0
-    sum_num = 0
+    sum_numlist = 0
     for i in numlist : #ใช้Sum ค่าใน numlist
         numtemp = numtemp + i#บวกค่าในลิตส์
     x_bar = numtemp / lennumlist#หาค่าเฉลี่ยโดยการหาร
 
     for j in range(lennumlist) : #อ่านค่าn
         tempnum = numlist[j] - x_bar #เก็บสมาชิกลบX_barและเก็บไว้ในตัวแปร
-        tempnum = tempnum ** (2) #นำค่าหลังจากลบกับค่าาเฉลี่ย
+        tempnum = tempnum ** (2) #นำค่าหลังจากลบกับค่าเฉลี่ย
         list_num.append(tempnum)#Addเข้าlist_num
 
     for k in list_num :#ใช้Sum ค่าในlist_num
-        sum_num = sum_num + k#บวกค่าในลิตส์
-    sum_num = sum_num / lennumlist
-    s_2_value = round(sum_num,2)
+        sum_numlist = sum_numlist + k#บวกค่าในลิตส์
+    sum_numlist = sum_numlist / lennumlist
+    s_2_value = round(sum_numlist,2)
     print(f'\n{gettext("ความแปรปรวน คือ")} {C_BOLD}{C_GREEN}{s_2_value:,.2f}{C_RESET}')
     output_table.add_column('S2',[f'{s_2_value:,.2f}'])
 
@@ -635,7 +634,7 @@ def find_mode(numlist):
     num_members = []
     mode = ''
     for num_i in numlist:
-        if num_i in num_counter:#ถ้าเลขที่อยู่ในlistซ้ำกับเลขในDictที่มีอยู๋แล้วให้+1เพิ่มเป็นValue
+        if num_i in num_counter:#ถ้าเลขที่อยู่ในlistซ้ำกับเลขในDictที่มีอยู่แล้วให้+1เพิ่มเป็นValue
             num_counter[num_i] += 1
         else:#ถ้าเลขยังไม่อยู่ในdictให้เซตเป็น1ไว้
             num_counter[num_i] = 1
@@ -668,15 +667,15 @@ def frequency_distribution(numlist,numclass = 0) :
     และแบ่งเป็นช่วงเท่าๆกัน จำนวนข้อมูลในแต่ละช่วงคะแนน เรียกว่า ความถี่"""
     num_min = numlist[0]
     num_max = 0
-    f_mom_last = 0
-    f_num={}
-    low_upper_class = {}#ขีดจำกัดล่างและบนในรูปแบบของdict
+    cumulative_frequency = 0
+    class_frequency={}
+    lower_upper_class = {}#ขีดจำกัดล่างและขีดจำกัดบนในรูปแบบของdict
     frequency_distribution_num_table = PrettyTable()
     frequency_distribution_num_table.align = "r"
     frequency_distribution_num_table.set_style(SINGLE_BORDER)
     frequency_distribution_num_table.field_names = [gettext("อันตรภาคชั้น"), gettext("ขีดจำกัดล่าง"), gettext("ขีดจำกัดบน"), gettext("จุดกลางชั้น"), gettext("ความถี่"), gettext("ความถี่สะสม"), gettext("fx"), gettext("สัดส่วน"), gettext("ร้อยละ")]
 
-    for i in numlist:
+    for i in numlist: 
         if i > num_max:
             num_max = i
     len_numlist_x = len(numlist)
@@ -714,70 +713,66 @@ def frequency_distribution(numlist,numclass = 0) :
             print(f'{C_RED}\n✖ {gettext("อันตรภาคชั้นต้องอยู่ระหว่าง 3-15 ชั้น กรุณากรอกชั้นใหม่อีกครั้ง")}\n{C_RESET}')
         else:
             break
-    range_x = math.ceil(((num_max - (num_min)) + 1) / num_class_interval)# ความกว้างของอัตราภาคแบบจำนวนเต็มที่ต้อง+1เพื่อบวกจำนวนตัวมันเอง
-    lower_class_lim = num_min #ขีดจำกัดล่างเริ่มต้นแถว1
-    upper_class_lim = (num_min + range_x) - 1#ขีดจำกัดบนเริ่มต้นแถว1
-    low_upper_class[lower_class_lim] = upper_class_lim
+    range_x = math.ceil(((num_max - (num_min)) + 1) / num_class_interval) # ความกว้างของอัตราภาคแบบจำนวนเต็มที่ต้อง+1เพื่อบวกจำนวนตัวมันเอง
+    lower_class_limit = num_min #ขีดจำกัดล่างเริ่มต้นแถว1
+    upper_class_limit = (num_min + range_x) - 1 #ขีดจำกัดบนเริ่มต้นแถว1
+    lower_upper_class[lower_class_limit] = upper_class_limit
     for i in range(1,num_class_interval):
-        lower_class_lim = upper_class_lim + 1#ขีดจำกัดล่างตั้งแต่แถว2ขึ้นไป
-        upper_class_lim = (lower_class_lim + range_x) - 1#ขีดจำกัดบนตั้งแต่แถว2ขึ้นไป
-        low_upper_class[lower_class_lim] = upper_class_lim
+        lower_class_limit = upper_class_limit + 1 #ขีดจำกัดล่างตั้งแต่แถว2ขึ้นไป
+        upper_class_limit = (lower_class_limit + range_x) - 1 #ขีดจำกัดบนตั้งแต่แถว2ขึ้นไป
+        lower_upper_class[lower_class_limit] = upper_class_limit
     print(f'\n{gettext("ความกว้างของอันตรภาคชั้น :")} {C_BOLD}{C_GREEN}{range_x}{C_RESET}')#แสดงความกว้างของอันตรภาคชั้น
 
     table_martrix = []
 
-    matrx_ptr_column = 0 #! Pointer เมทริกซ์ คอลัมน์
-    matrx_ptr_row = 0 #! Pointer เมทริกซ์ แถว
-    #แสดงค่าในตาราง
-    for (member,maxx) in low_upper_class.items() :
+    martrix_pointer_column = 0 #! Pointer เมทริกซ์ คอลัมน์
+    martrix_pointer_row = 0 #! Pointer เมทริกซ์ แถว
+    #แสดงค่าในตาราง (คอลัมน์ 0)
+    for (k_lower_class,v_upper_class) in lower_upper_class.items() : #!k คือ key , v คือ value
         table_martrix.append(["",0,0,0,0,0,0,0,0])
-        table_martrix[matrx_ptr_row][matrx_ptr_column] = f'{member} - {maxx}'
-        matrx_ptr_row = matrx_ptr_row + 1
+        table_martrix[martrix_pointer_row][martrix_pointer_column] = f'{k_lower_class} - {v_upper_class}'
+        martrix_pointer_row = martrix_pointer_row + 1
 
-    #หาขีดจำกัดล่างและบน
-    matrx_ptr_column = 1
-    matrx_ptr_row = 0
-    for (member,maxx) in low_upper_class.items() :
-        table_martrix[matrx_ptr_row][matrx_ptr_column] = f'{member - 0.5}'
-        table_martrix[matrx_ptr_row][matrx_ptr_column + 1] = f'{maxx + 0.5}'
-        matrx_ptr_row = matrx_ptr_row + 1
+    #หาขีดจำกัดล่างและบน (คอลัมน์ 1 2)
+    martrix_pointer_column = 1
+    martrix_pointer_row = 0
+    for (k_lower_class,v_upper_class) in lower_upper_class.items() :
+        table_martrix[martrix_pointer_row][martrix_pointer_column] = f'{k_lower_class - 0.5}'
+        table_martrix[martrix_pointer_row][martrix_pointer_column + 1] = f'{v_upper_class + 0.5}'
+        martrix_pointer_row = martrix_pointer_row + 1
 
-    #หาจุดกึ่งกลาง
-    matrx_ptr_column = 3
-    matrx_ptr_row = 0
-    for (member,maxx) in low_upper_class.items() :
-        table_martrix[matrx_ptr_row][matrx_ptr_column] = f'{((member - 0.5) + (maxx + 0.5)) / 2}'
-        matrx_ptr_row = matrx_ptr_row + 1
+    #หาจุดกึ่งกลาง (คอลัมน์ 3)
+    martrix_pointer_column = 3
+    martrix_pointer_row = 0
+    for (k_lower_class,v_upper_class) in lower_upper_class.items() :
+        table_martrix[martrix_pointer_row][martrix_pointer_column] = f'{((k_lower_class - 0.5) + (v_upper_class + 0.5)) / 2}'
+        martrix_pointer_row = martrix_pointer_row + 1
 
-    #หาความถี่
-    matrx_ptr_column = 4
-    matrx_ptr_row = 0
-    for (member,maxx) in low_upper_class.items() :
-        f_num[member] = 0
+    #หาความถี่ (คอลัมน์ 4 5 6 7 8)
+    martrix_pointer_column = 4
+    martrix_pointer_row = 0
+    for (k_lower_class,v_upper_class) in lower_upper_class.items() :
+        class_frequency[k_lower_class] = 0
         len_numlist = len(numlist)
         for k in range(len_numlist):
-            if (numlist[k] >= member) and (numlist[k] <= maxx) :
-                f_num[member] += 1
-    for f_mom in f_num.values() : #!mem key ขอบล่าง แต่ชั้น fmon คือความถี่
-        table_martrix[matrx_ptr_row][matrx_ptr_column] = f'{f_mom}'
+            if (numlist[k] >= k_lower_class) and (numlist[k] <= v_upper_class) :
+                class_frequency[k_lower_class] += 1
+    for v_class_frequency in class_frequency.values() : #!fmom คือความถี่
+        #?ค่าความถี่
+        table_martrix[martrix_pointer_row][martrix_pointer_column] = f'{v_class_frequency}'
+        #?ค่าความถี่สะสม
+        cumulative_frequency = cumulative_frequency + v_class_frequency
+        table_martrix[martrix_pointer_row][martrix_pointer_column + 1] = f'{cumulative_frequency}'
         #?หาสัดส่วน ร้อยละ
-        table_martrix[matrx_ptr_row][matrx_ptr_column + 2] = f'{float(table_martrix[matrx_ptr_row][3]) * float(table_martrix[matrx_ptr_row][4])}'
-        table_martrix[matrx_ptr_row][matrx_ptr_column + 3] = f'{f_mom / sum(f_num.values()):.3f}'
-        table_martrix[matrx_ptr_row][matrx_ptr_column + 4] = f'{(f_mom / sum(f_num.values())) * 100:.3f}'
-        matrx_ptr_row = matrx_ptr_row + 1
-
-    #ค่าความถี่สะสม
-    matrx_ptr_column = 5
-    matrx_ptr_row = 0
-    for f_mom in f_num.values() : #!f mem key f mom value
-        f_mom_last = f_mom_last + f_mom
-        table_martrix[matrx_ptr_row][matrx_ptr_column] = f'{f_mom_last}'
-        matrx_ptr_row = matrx_ptr_row + 1
+        table_martrix[martrix_pointer_row][martrix_pointer_column + 2] = f'{float(table_martrix[martrix_pointer_row][3]) * float(table_martrix[martrix_pointer_row][4])}'
+        table_martrix[martrix_pointer_row][martrix_pointer_column + 3] = f'{v_class_frequency / sum(class_frequency.values()):.3f}'
+        table_martrix[martrix_pointer_row][martrix_pointer_column + 4] = f'{(v_class_frequency / sum(class_frequency.values())) * 100:.3f}'
+        martrix_pointer_row = martrix_pointer_row + 1
 
     if ISDEBUG is True :
         print(f'{C_YELLOW}')
-        print(f'\tlow_upper_class {gettext("คือ")} \n\n{low_upper_class}')
-        print(f'\n\tf_num {gettext("คือ")} \n\n{f_num}')
+        print(f'\tlower_upper_class {gettext("คือ")} \n\n{lower_upper_class}')
+        print(f'\n\tclass_frequency {gettext("คือ")} \n\n{class_frequency}')
         print(f'\n\ttable_martrix {gettext("คือ")} \n')
         print(f'{C_GREEN} │ ',end='')
         for i, data in enumerate(table_martrix):
@@ -812,9 +807,9 @@ def frequency_distribution(numlist,numclass = 0) :
 
     #?หาค่าสถิติ
     #!หาค่าความเบี่ยงเบนควอไทล์
-    def find_r_quartile(r_userinput) :
+    def find_r_quartile(r_input) :
         f_l = 0
-        qr_r4n = (r_userinput / 4) * len_numlist_x
+        qr_r4n = (r_input / 4) * len_numlist_x
         quartile_pointer_row = 0
         for i in range(len_num_martrix) :
             if qr_r4n < float(table_martrix[i][5]) :
@@ -826,7 +821,7 @@ def frequency_distribution(numlist,numclass = 0) :
             f_l = float(table_martrix[quartile_pointer_row - 1][5]) #FL คือ ความถี่สะสมในชั้นก่อนหน้า
         else:
             f_l = 0.0 #FL คือ ความถี่สะสมในชั้นก่อนหน้า
-        rn_4 = (r_userinput * len_numlist_x) / 4 #rN/4 คือตำแหน่งของควอร์ไทล์
+        rn_4 = (r_input * len_numlist_x) / 4 #rN/4 คือตำแหน่งของควอร์ไทล์
         qr_i = range_x #I คือ ความกว้างของอันตรภาคชั้น
         qr_l = float(table_martrix[quartile_pointer_row][1]) #L คือ ขอบล่างที่ควอร์ไทล์นั้นๆตั้งอยู่
 
@@ -835,12 +830,13 @@ def frequency_distribution(numlist,numclass = 0) :
         if ISDEBUG is True :
             print(f'{C_YELLOW}')
             print(f'\tPointer row {gettext("คือ")} {quartile_pointer_row}')
-            print(f'\tX (r) {gettext("คือ")} {r_userinput}')
             print(f'\tLo (qr_l) {gettext("คือ")} {qr_l}')
             print(f'\ti (qr_i) {gettext("คือ")} {qr_i}')
+            print(f'\tN (len_numlist_x) {gettext("คือ")} {len_numlist_x}')
+            print(f'\tX (r_input) {gettext("คือ")} {r_input}')
             print(f'\tF (f_l) {gettext("คือ")} {f_l}')
             print(f'\tf (f_x) {gettext("คือ")} {f_x}')
-            print(f'\tQ{r_userinput} {gettext("คือ")} {q_r}')
+            print(f'\tQ{r_input} {gettext("คือ")} {q_r}')
             print(f'{C_RESET}')
         return q_r
 
@@ -951,7 +947,7 @@ while IS_RUN:
                     numlist_input(num, defmode = DEFMODE, defcalmode = DEFCALMODE)
                 case _ :
                     if QUESTION == '' :
-                        numlist_input(loadtemp, 1, DEFMODE, DEFCALMODE) #! (loadtemp,X,Y) 1 คือ bypass input (!=0) DEFMODE คือค่าโหมดตั้งต้น DEFCALMODE คือค่าโหมดตั้งต้นไม่แจกแจง
+                        numlist_input(loadtemp, 1, DEFMODE, DEFCALMODE) #! loadtemp คือชุดข้อมูล 1 คือ bypass input (!=0) DEFMODE คือค่าโหมดตั้งต้น DEFCALMODE คือค่าโหมดตั้งต้นไม่แจกแจง
                     else:
                         while True:
                             print(f'\n{C_RESET}{gettext("ต้องการรับข้อมูลผ่านไฟล์ txt หรือไม่")} [ Y / N ] ?')
@@ -1006,7 +1002,7 @@ while IS_RUN:
             print(f'\n{C_RESET}{"═"*100}\n')
             print(f'{gettext("จบการทำงาน")}')
             print(f'\n{gettext("จัดทำโดย")}')
-            print(f'\t{C_MAGENTA}049 {C_GREEN}Champ {C_MAGENTA}\n\t018 {C_GREEN}Tong {C_MAGENTA}\n\t019 {C_GREEN}Dong{C_RESET}\n\n\t{C_BOLD}{C_YELLOW}CS65{C_RESET}') #!ชื่อเต็มในตัวส่ง
+            print(f'\t{C_MAGENTA}65003123049 {C_GREEN}กิตติภพ มาสระ {C_MAGENTA}\n\t65003263018 {C_GREEN}ศุภวิชญ์ เวทยสาร {C_MAGENTA}\n\t65003263019 {C_GREEN}นิติธร นันทสินธ์{C_RESET}\n\n\t{C_BOLD}{C_YELLOW}CS65{C_RESET}')
             print(f'\n{"═"*100}\n')
             IS_RUN = False
         else:
