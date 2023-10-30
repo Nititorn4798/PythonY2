@@ -367,7 +367,7 @@ def numlist_input(inputset, bypassinput = 0, defmode = 0, defcalmode = 0): #! by
     finally:
         if is_error is False:
             match defmode:
-                case 1:
+                case 1 :
                     while True:
                         print(f'\n{gettext("เลือกโหมดการคำนวณแบบไม่แจกแจง ที่ต้องการ")}')
                         print(f'\t1. {gettext("ค่าสูงสุด Max")}')
@@ -413,7 +413,7 @@ def numlist_input(inputset, bypassinput = 0, defmode = 0, defcalmode = 0): #! by
                             find_s_2(numlist)
                         case 9 :
                             find_range(numlist)
-                        case 999:
+                        case 999 :
                             find_max(numlist)
                             find_min(numlist)
                             find_mean(numlist)
@@ -426,7 +426,7 @@ def numlist_input(inputset, bypassinput = 0, defmode = 0, defcalmode = 0): #! by
                             print(f'\n{output_table}')
                         case _ :
                             print(f'\n{C_RED}✖ {gettext("พบข้อผิดพลาด กรุณาตรวจสอบตัวเลขที่ท่านกรอกมา")}{C_RESET}')
-                case 2:
+                case 2 :
                     frequency_distribution(numlist,DEFNUMCLASS)
                 case _ :
                     print(f'\n{C_RED}✖ {gettext("พบข้อผิดพลาด กรุณาตรวจสอบตัวเลขที่ท่านกรอกมา")}{C_RESET}')
@@ -514,12 +514,12 @@ def find_median(numlist):
     สามารถหาได้โดยการเรียงลำดับข้อมูลจากน้อยไปมาก"""
     numlist.sort()
     numlistpos = (len(numlist)) / 2 #ใช้หาตำแหน่ง
-    mod = len(numlist) % 2 #เพื่่อเช็คว่าเป็นจำนวนเต็มมั้ย ถ้า0เป็นจำนวนเต็ม ถ้าเป็นค่าอื่นเป็นจำนวนเศษ
-    if mod == 0 :#ในกรณีจำนวนเต็ม
-        numlistpos = int(numlistpos)#แปลงเป็นintเพื่อใช้ระบุตำแหน่งในlist
-        total = (numlist[numlistpos - 1] + numlist[numlistpos]) / 2#สูตรเมื่อจำนวนเป็นเลขคู่
+    mod = len(numlist) % 2 #เพื่่อเช็คว่าเป็นจำนวนเต็ม ถ้า0เป็นจำนวนเต็ม ถ้าเป็นค่าอื่นเป็นจำนวนเศษ
+    if mod == 0 : #ในกรณีจำนวนเต็ม
+        numlistpos = int(numlistpos) #แปลงเป็นintเพื่อใช้ระบุตำแหน่งในlist
+        total = (numlist[numlistpos - 1] + numlist[numlistpos]) / 2 #สูตรเมื่อจำนวนเป็นเลขคู่
     else :
-        numlistpos = round(numlistpos)  #แปลงเป็นintเพื่อใช้ระบุตำแหน่งในlist โดยปัดเศษลง
+        numlistpos = round(numlistpos) #แปลงเป็นintเพื่อใช้ระบุตำแหน่งในlist โดยปัดเศษลง
         total = numlist[numlistpos - 1] #สูตรเมื่อจำนวนเป็นเลขคี่
     print(f'\n{gettext("ค่ามัธยฐาน คือ")} {C_BOLD}{C_GREEN}{total:,.2f}{C_RESET}')
     output_table.add_column('Median',[f'{total:,.2f}'])
@@ -527,10 +527,10 @@ def find_median(numlist):
 def find_mean(numlist):
     """ค่าเฉลี่ย x̄ (Average, Mean) หมายถึง 
     ค่าเฉลี่ยซึ่งเกิดจากข้อมูลของผลรวมทั้งหมดหารด้วยจำนวนรายการของข้อมูล"""
-    numlistlen = len(numlist) #นับสมาชิกเก็บไว้ในค่าn
+    numlistlen = len(numlist) #นับสมาชิกเก็บไว้ในค่า n
     mean = 0
     for i in numlist :
-        mean = mean + i #บวกค่าในลิตส์
+        mean = mean + i #บวกค่าในลิสต์
     mean = mean / numlistlen #หาค่าเฉลี่ยโดยการหาร
     print(f'\n{gettext("ค่ามัชฌิมเลขคณิต คือ")} {C_BOLD}{C_GREEN}{mean:,.2f}{C_RESET}')
     output_table.add_column('Mean',[f'{mean:,.2f}'])
@@ -545,18 +545,18 @@ def find_md(numlist):
     numtemp = 0
     sum_numlist = 0
     for i in numlist : #ใช้Sum ค่าใน numlist
-        numtemp = numtemp + i#บวกค่าในลิตส์
-    x_bar = numtemp / lennumlist#หาค่าเฉลี่ยโดยการหาร
+        numtemp = numtemp + i
+    x_bar = numtemp / lennumlist #หาค่าเฉลี่ยโดยการหาร
 
-    for j in range(lennumlist) : #อ่านค่าn
-        tempnum = numlist[j] - x_bar #เก็บสมาชิกลบX_barและเก็บไว้ในตัวแปร
-        if tempnum < 0:#ถ้าเป็นลบให้คูณด้วย-1เพื่อแปลงเป็นบวก
+    for j in range(lennumlist) : #อ่านค่า n
+        tempnum = numlist[j] - x_bar #เก็บสมาชิกลบ X_bar และเก็บไว้ในตัวแปร
+        if tempnum < 0: #ถ้าเป็นลบให้คูณด้วย -1 เพื่อแปลงเป็นบวก
             tempnum = tempnum * (-1)
-        list_num.append(tempnum)#Addเข้าlist_num
+        list_num.append(tempnum) #Addเข้าlist_num
 
-    for k in list_num :#ใช้Sum ค่าในlist_num
-        sum_numlist = sum_numlist + k#บวกค่าในลิตส์
-    sum_numlist = sum_numlist / lennumlist#หาค่าM.D.
+    for k in list_num : #ใช้ Sum ค่าในlist_num
+        sum_numlist = sum_numlist + k #บวกค่าในลิสต์
+    sum_numlist = sum_numlist / lennumlist #หาค่า M.D.
     md_value = round(sum_numlist,2)
     print(f'\n{gettext("ความเบี่ยงเบนเฉลี่ย คือ")} {C_BOLD}{C_GREEN}{md_value:,.2f}{C_RESET}')
     output_table.add_column('M.D.',[f'{md_value:,.2f}'])
@@ -569,16 +569,16 @@ def find_sd(numlist):
     numtemp = 0
     sum_numlist = 0
     for i in numlist : #ใช้Sum ค่าใน numlist
-        numtemp = numtemp + i#บวกค่าในลิตส์
-    x_bar = numtemp / lennumlist#หาค่าเฉลี่ยโดยการหาร
+        numtemp = numtemp + i #บวกค่าในลิสต์
+    x_bar = numtemp / lennumlist #หาค่าเฉลี่ยโดยการหาร
 
     for j in range(lennumlist) : #อ่านค่าn
-        tempnum = numlist[j] - x_bar #เก็บสมาชิกลบX_barและเก็บไว้ในตัวแปร
-        tempnum = tempnum ** (2) #นำค่าหลังจากลบกับค่าาเฉลี่ย
-        list_num.append(tempnum)#Addเข้าlist_num
+        tempnum = numlist[j] - x_bar #เก็บสมาชิกลบ X_bar และเก็บไว้ในตัวแปร
+        tempnum = tempnum ** (2) #นำค่าหลังจากลบกับค่าเฉลี่ย
+        list_num.append(tempnum) #Addเข้า list_num
 
-    for k in list_num :#ใช้Sum ค่าในlist_num
-        sum_numlist = sum_numlist + k#บวกค่าในลิตส์
+    for k in list_num : #ใช้Sum ค่าในlist_num
+        sum_numlist = sum_numlist + k #บวกค่าในลิสต์
     sum_numlist = math.sqrt(sum_numlist / lennumlist)
     sd_value = round(sum_numlist,2)
     print(f'\n{gettext("ความเบี่ยงเบนมาตรฐาน คือ")} {C_BOLD}{C_GREEN}{sd_value:,.2f}{C_RESET}')
@@ -592,16 +592,16 @@ def find_s_2(numlist):
     numtemp = 0
     sum_numlist = 0
     for i in numlist : #ใช้Sum ค่าใน numlist
-        numtemp = numtemp + i#บวกค่าในลิตส์
-    x_bar = numtemp / lennumlist#หาค่าเฉลี่ยโดยการหาร
+        numtemp = numtemp + i #บวกค่าในลิสต์
+    x_bar = numtemp / lennumlist #หาค่าเฉลี่ยโดยการหาร
 
     for j in range(lennumlist) : #อ่านค่าn
         tempnum = numlist[j] - x_bar #เก็บสมาชิกลบX_barและเก็บไว้ในตัวแปร
         tempnum = tempnum ** (2) #นำค่าหลังจากลบกับค่าเฉลี่ย
-        list_num.append(tempnum)#Addเข้าlist_num
+        list_num.append(tempnum) #Addเข้าlist_num
 
-    for k in list_num :#ใช้Sum ค่าในlist_num
-        sum_numlist = sum_numlist + k#บวกค่าในลิตส์
+    for k in list_num : #ใช้Sum ค่าใน list_num
+        sum_numlist = sum_numlist + k #บวกค่าในลิตส์
     sum_numlist = sum_numlist / lennumlist
     s_2_value = round(sum_numlist,2)
     print(f'\n{gettext("ความแปรปรวน คือ")} {C_BOLD}{C_GREEN}{s_2_value:,.2f}{C_RESET}')
@@ -634,23 +634,23 @@ def find_mode(numlist):
     num_members = []
     mode = ''
     for num_i in numlist:
-        if num_i in num_counter:#ถ้าเลขที่อยู่ในlistซ้ำกับเลขในDictที่มีอยู่แล้วให้+1เพิ่มเป็นValue
+        if num_i in num_counter: #ถ้าเลขที่อยู่ในlistซ้ำกับเลขในDictที่มีอยู่แล้วให้+1เพิ่มเป็นValue
             num_counter[num_i] += 1
-        else:#ถ้าเลขยังไม่อยู่ในdictให้เซตเป็น1ไว้
+        else: #ถ้าเลขยังไม่อยู่ในdictให้เซตเป็น1ไว้
             num_counter[num_i] = 1
 
-    for (member,maxx) in num_counter.items() :#member,maxคือการเปลี่ยเทียบกับ.item()ที่มีค่าออกมาเป็นเซตๆ หรือ(member,max)=(x,y) เมื่อxและyเป็นค่าในnum_counter.items()
-        if maxx == max(num_counter.values()):#หาค่าที่ซ้ำมากที่สุดของvalueทั้งหมดของdict และเทียบกับmaxxทุกๆตัว เพื่อหา member
-            num_members.append(member)#เพื่อเพิ่มไว้ดูว่ามีฐานนิยมที่เป็นสมาชิกกี่ตัว และตัวไหนบ้างที่เป็น
+    for (member,maxx) in num_counter.items() : #member,maxคือการเปรียบเทียบกับ.item()ที่มีค่าออกมาเป็นเซตๆ หรือ(member,max)=(x,y) เมื่อxและyเป็นค่าในnum_counter.items()
+        if maxx == max(num_counter.values()): #หาค่าที่ซ้ำมากที่สุดของvalueทั้งหมดของdict และเทียบกับmaxxทุกๆตัว เพื่อหา member
+            num_members.append(member) #เพื่อเพิ่มไว้ดูว่ามีฐานนิยมที่เป็นสมาชิกกี่ตัว และตัวไหนบ้างที่เป็น
     len_num_members = len(num_members)
     ishave_mode = True
     num_members.sort()
     for i in range(len_num_members):
         if len(num_members) == 1:
             mode = str(num_members[i])
-        elif len(num_members) > 1 and len(num_members) < 3:#ถ้าสมาชิกของnumมากกว่า0และน้อยกว่า3ให้ปริ้นฐานนิยมออกมาได้(ฐานนิยมมีได้มากสุด2ตัว)
+        elif len(num_members) > 1 and len(num_members) < 3: #ถ้าสมาชิกของnumมากกว่า0และน้อยกว่า3ให้ปริ้นฐานนิยมออกมาได้(ฐานนิยมมีได้มากสุด2ตัว)
             mode = mode + ', '+ str(num_members[i])
-        else :#แต่ถ้าสมาชิกของnumไม่อยู่ในเงื่อนไข
+        else : #แต่ถ้าสมาชิกของnumไม่อยู่ในเงื่อนไข
             ishave_mode = False
 
     if ishave_mode is True :
@@ -668,14 +668,14 @@ def frequency_distribution(numlist,numclass = 0) :
     num_min = numlist[0]
     num_max = 0
     cumulative_frequency = 0
-    class_frequency={}
-    lower_upper_class = {}#ขีดจำกัดล่างและขีดจำกัดบนในรูปแบบของdict
+    class_frequency = {}
+    lower_upper_class = {} #ขีดจำกัดล่างและขีดจำกัดบนในรูปแบบของ dict
     frequency_distribution_num_table = PrettyTable()
     frequency_distribution_num_table.align = "r"
     frequency_distribution_num_table.set_style(SINGLE_BORDER)
     frequency_distribution_num_table.field_names = [gettext("อันตรภาคชั้น"), gettext("ขีดจำกัดล่าง"), gettext("ขีดจำกัดบน"), gettext("จุดกลางชั้น"), gettext("ความถี่"), gettext("ความถี่สะสม"), gettext("fx"), gettext("สัดส่วน"), gettext("ร้อยละ")]
 
-    for i in numlist: 
+    for i in numlist:
         if i > num_max:
             num_max = i
     len_numlist_x = len(numlist)
@@ -721,7 +721,7 @@ def frequency_distribution(numlist,numclass = 0) :
         lower_class_limit = upper_class_limit + 1 #ขีดจำกัดล่างตั้งแต่แถว2ขึ้นไป
         upper_class_limit = (lower_class_limit + range_x) - 1 #ขีดจำกัดบนตั้งแต่แถว2ขึ้นไป
         lower_upper_class[lower_class_limit] = upper_class_limit
-    print(f'\n{gettext("ความกว้างของอันตรภาคชั้น :")} {C_BOLD}{C_GREEN}{range_x}{C_RESET}')#แสดงความกว้างของอันตรภาคชั้น
+    print(f'\n{gettext("ความกว้างของอันตรภาคชั้น :")} {C_BOLD}{C_GREEN}{range_x}{C_RESET}') #แสดงความกว้างของอันตรภาคชั้น
 
     table_martrix = []
 
@@ -758,12 +758,12 @@ def frequency_distribution(numlist,numclass = 0) :
             if (numlist[k] >= k_lower_class) and (numlist[k] <= v_upper_class) :
                 class_frequency[k_lower_class] += 1
     for v_class_frequency in class_frequency.values() : #!fmom คือความถี่
-        #?ค่าความถี่
+        #? ค่าความถี่
         table_martrix[martrix_pointer_row][martrix_pointer_column] = f'{v_class_frequency}'
-        #?ค่าความถี่สะสม
+        #? ค่าความถี่สะสม
         cumulative_frequency = cumulative_frequency + v_class_frequency
         table_martrix[martrix_pointer_row][martrix_pointer_column + 1] = f'{cumulative_frequency}'
-        #?หาสัดส่วน ร้อยละ
+        #? หาสัดส่วน ร้อยละ
         table_martrix[martrix_pointer_row][martrix_pointer_column + 2] = f'{float(table_martrix[martrix_pointer_row][3]) * float(table_martrix[martrix_pointer_row][4])}'
         table_martrix[martrix_pointer_row][martrix_pointer_column + 3] = f'{v_class_frequency / sum(class_frequency.values()):.3f}'
         table_martrix[martrix_pointer_row][martrix_pointer_column + 4] = f'{(v_class_frequency / sum(class_frequency.values())) * 100:.3f}'
