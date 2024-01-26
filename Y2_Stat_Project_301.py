@@ -579,7 +579,7 @@ def find_sd(numlist):
 
     for k in list_num : #ใช้Sum ค่าในlist_num
         sum_numlist = sum_numlist + k #บวกค่าในลิสต์
-    sum_numlist = math.sqrt(sum_numlist / lennumlist)
+    sum_numlist = math.sqrt(sum_numlist / (lennumlist-1))
     sd_value = round(sum_numlist,2)
     print(f'\n{gettext("ความเบี่ยงเบนมาตรฐาน คือ")} {C_BOLD}{C_GREEN}{sd_value:,.2f}{C_RESET}')
     output_table.add_column('S.D.',[f'{sd_value:,.2f}'])
